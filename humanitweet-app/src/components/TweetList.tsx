@@ -5,10 +5,6 @@ interface ITweetListState {
     tweets: ITweetData[]
 }
 
-export interface ITweetData {
-    user: string;
-    text: string;
-}
 export default class TweetList extends React.Component<any, ITweetListState> {
     constructor(props: any) {
         super(props);
@@ -24,8 +20,8 @@ export default class TweetList extends React.Component<any, ITweetListState> {
 
     refreshTweets = async () => {
         const loadedTweets: ITweetData[] = [
-            {text: "Test hardcoded Tweet", user: "juanumusic"},
-            {text: "Another hardcoded tweet", user: "another_user"},
+            {text: "Test hardcoded Tweet", author: "juanumusic"},
+            {text: "Another hardcoded tweet", author: "another_user"},
         ]
         this.setState({tweets: loadedTweets});
     }

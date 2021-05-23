@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import FormGroup from "react-bootstrap/FormGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
+import StorageService from "../services/StorageService";
 
 interface ITweetEditorState {
   text: string;
@@ -24,10 +25,19 @@ export default class TweetEditor extends React.Component<
     super(props);
   }
 
-  handleSendTweet = () => {
-    //const contract = this.props.drizzle.contracts["Humanitweet"]
-    console.log("Sending text", this.state.text);
-    //contract.methods.sendTweet(this.state.text);
+  handleSendTweet = async () => {
+
+    const tweetData : ITweetData = {
+      text: this.state.text,
+      author: this.props.drizzleState.accounts[0] as string
+    }
+    const storage = new StorageService();
+
+    const result = await storage.uploadTweet(tweetData);
+    console.log("TODO: store humanitweet on contract with url",`http://127.0.0.1:8080/ipfs/${result.path}`);
+    //const tweetContract = this.props.drizzle.contracts["Humanitweet"];
+    //tweetContract.methods.sendTweet(tweetCon)
+    
   };
 
   render() {
