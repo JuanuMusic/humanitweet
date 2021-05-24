@@ -1,0 +1,958 @@
+{
+  "contractName": "IProofOfHumanity",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_submissionID",
+          "type": "address"
+        }
+      ],
+      "name": "isRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "submissionCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_submissionID\",\"type\":\"address\"}],\"name\":\"isRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"submissionCounter\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"isRegistered(address)\":{\"details\":\"Return true if the submission is registered and not expired.\",\"params\":{\"_submissionID\":\"The address of the submission.\"},\"returns\":{\"_0\":\"Whether the submission is registered or not.\"}},\"submissionCounter()\":{\"details\":\"Return the number of submissions irrespective of their status.\",\"returns\":{\"_0\":\"The number of submissions.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/E/Code/Repos/JuanuMusic/humanitweet/humanitweet-contracts/contracts/IProofOfHumanity.sol\":\"IProofOfHumanity\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/E/Code/Repos/JuanuMusic/humanitweet/humanitweet-contracts/contracts/IProofOfHumanity.sol\":{\"keccak256\":\"0x949a7f977a6ed647a6f7f0a94378f0e7afd81e80f07deb9bce5e76d3ed642544\",\"urls\":[\"bzz-raw://936bdc0662fc9f3cc49bded4f8432baeba65cb7c073dad508c2aee7bca329cae\",\"dweb:/ipfs/QmUgQiV4q4eDfrf9vVGpkNhTX4DtqLUUHw3H9TJm7AspwS\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/**\r\n *  @authors: [@unknownunknown1*, @clesaege]\r\n *  @reviewers: []\r\n *  @auditors: []\r\n *  @bounties: []\r\n *  @deployments: []\r\n *  @tools: []\r\n */\r\n\r\npragma solidity 0.8.0 ;\r\n\r\nimport \"@openzeppelin/contracts/token/ERC20/IERC20.sol\";\r\n\r\ninterface IProofOfHumanity {\r\n    \r\n    /** @dev Return true if the submission is registered and not expired.\r\n     *  @param _submissionID The address of the submission.\r\n     *  @return Whether the submission is registered or not.\r\n     */\r\n    function isRegistered(address _submissionID) external view returns (bool);\r\n    \r\n    /** @dev Return the number of submissions irrespective of their status.\r\n     *  @return The number of submissions.\r\n     */\r\n    function submissionCounter() external view returns (uint);\r\n    \r\n}\r\n\r\n/**\r\n *  @title ProofOfHumanityProxy\r\n *  A proxy contract for ProofOfHumanity that implements a token interface to interact with other dapps.\r\n *  Note that it isn't an ERC20 and only implements its interface in order to be compatible with Snapshot.\r\n */\r\ninterface IProofOfHumanityProxy {\r\n\r\n    /** @dev Constructor.\r\n     *  @param _PoH The address of the related ProofOfHumanity contract.\r\n     */\r\n    //constructor(IProofOfHumanity _PoH) virtual;\r\n\r\n    /** @dev Changes the address of the the related ProofOfHumanity contract.\r\n     *  @param _PoH The address of the new contract.\r\n     */\r\n    function changePoH(IProofOfHumanity _PoH) external virtual;\r\n    \r\n    /** @dev Changes the address of the the governor.\r\n     *  @param _governor The address of the new governor.\r\n     */\r\n    function changeGovernor(address _governor) external virtual;\r\n    \r\n\r\n    /** @dev Returns true if the submission is registered and not expired.\r\n     *  @param _submissionID The address of the submission.\r\n     *  @return Whether the submission is registered or not.\r\n     */\r\n    function isRegistered(address _submissionID) external view virtual returns (bool);\r\n\r\n    // ******************** //\r\n    // *      IERC20      * //\r\n    // ******************** //\r\n\r\n    // /** @dev Returns the balance of a particular submission of the ProofOfHumanity contract.\r\n    //  *  Note that this function takes the expiration date into account.\r\n    //  *  @param _submissionID The address of the submission.\r\n    //  *  @return The balance of the submission.\r\n    //  */\r\n    // function balanceOf(address _submissionID) external view returns (uint256);\r\n\r\n    // /** @dev Returns the count of all submissions that made a registration request at some point, including those that were added manually.\r\n    //  *  Note that with the current implementation of ProofOfHumanity it'd be very costly to count only the submissions that are currently registered.\r\n    //  *  @return The total count of submissions.\r\n    //  */\r\n    // function totalSupply() external view returns (uint256);\r\n\r\n    // function transfer(address _recipient, uint256 _amount) external returns (bool) { return false; }\r\n\r\n    // function allowance(address _owner, address _spender) external view returns (uint256) {}\r\n\r\n    // function approve(address _spender, uint256 _amount) external returns (bool) { return false; }\r\n\r\n    // function transferFrom(address _sender, address _recipient, uint256 _amount) external returns (bool) { return false; }\r\n}",
+  "sourcePath": "E:\\Code\\Repos\\JuanuMusic\\humanitweet\\humanitweet-contracts\\contracts\\IProofOfHumanity.sol",
+  "ast": {
+    "absolutePath": "/E/Code/Repos/JuanuMusic/humanitweet/humanitweet-contracts/contracts/IProofOfHumanity.sol",
+    "exportedSymbols": {
+      "IERC20": [
+        516
+      ],
+      "IProofOfHumanity": [
+        268
+      ],
+      "IProofOfHumanityProxy": [
+        291
+      ]
+    },
+    "id": 292,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 252,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "154:23:2"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 253,
+        "nodeType": "ImportDirective",
+        "scope": 292,
+        "sourceUnit": 517,
+        "src": "181:56:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 268,
+        "linearizedBaseContracts": [
+          268
+        ],
+        "name": "IProofOfHumanity",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 254,
+              "nodeType": "StructuredDocumentation",
+              "src": "281:201:2",
+              "text": "@dev Return true if the submission is registered and not expired.\n  @param _submissionID The address of the submission.\n  @return Whether the submission is registered or not."
+            },
+            "functionSelector": "c3c5a547",
+            "id": 261,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isRegistered",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 257,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 256,
+                  "mutability": "mutable",
+                  "name": "_submissionID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 261,
+                  "src": "510:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 255,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "510:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "509:23:2"
+            },
+            "returnParameters": {
+              "id": 260,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 259,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 261,
+                  "src": "556:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 258,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "556:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "555:6:2"
+            },
+            "scope": 268,
+            "src": "488:74:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 262,
+              "nodeType": "StructuredDocumentation",
+              "src": "574:124:2",
+              "text": "@dev Return the number of submissions irrespective of their status.\n  @return The number of submissions."
+            },
+            "functionSelector": "76c23ff1",
+            "id": 267,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submissionCounter",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 263,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "730:2:2"
+            },
+            "returnParameters": {
+              "id": 266,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 265,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 267,
+                  "src": "756:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 264,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "756:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "755:6:2"
+            },
+            "scope": 268,
+            "src": "704:58:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 292,
+        "src": "241:530:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 269,
+          "nodeType": "StructuredDocumentation",
+          "src": "775:255:2",
+          "text": "  @title ProofOfHumanityProxy\n  A proxy contract for ProofOfHumanity that implements a token interface to interact with other dapps.\n  Note that it isn't an ERC20 and only implements its interface in order to be compatible with Snapshot."
+        },
+        "fullyImplemented": false,
+        "id": 291,
+        "linearizedBaseContracts": [
+          291
+        ],
+        "name": "IProofOfHumanityProxy",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 270,
+              "nodeType": "StructuredDocumentation",
+              "src": "1236:136:2",
+              "text": "@dev Changes the address of the the related ProofOfHumanity contract.\n  @param _PoH The address of the new contract."
+            },
+            "functionSelector": "ee864d55",
+            "id": 276,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "changePoH",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 274,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 273,
+                  "mutability": "mutable",
+                  "name": "_PoH",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 276,
+                  "src": "1397:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IProofOfHumanity_$268",
+                    "typeString": "contract IProofOfHumanity"
+                  },
+                  "typeName": {
+                    "id": 272,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 271,
+                      "name": "IProofOfHumanity",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 268,
+                      "src": "1397:16:2"
+                    },
+                    "referencedDeclaration": 268,
+                    "src": "1397:16:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IProofOfHumanity_$268",
+                      "typeString": "contract IProofOfHumanity"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1396:23:2"
+            },
+            "returnParameters": {
+              "id": 275,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1436:0:2"
+            },
+            "scope": 291,
+            "src": "1378:59:2",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 277,
+              "nodeType": "StructuredDocumentation",
+              "src": "1449:117:2",
+              "text": "@dev Changes the address of the the governor.\n  @param _governor The address of the new governor."
+            },
+            "functionSelector": "e4c0aaf4",
+            "id": 282,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "changeGovernor",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 280,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 279,
+                  "mutability": "mutable",
+                  "name": "_governor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 282,
+                  "src": "1596:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 278,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1596:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1595:19:2"
+            },
+            "returnParameters": {
+              "id": 281,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1631:0:2"
+            },
+            "scope": 291,
+            "src": "1572:60:2",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 283,
+              "nodeType": "StructuredDocumentation",
+              "src": "1646:202:2",
+              "text": "@dev Returns true if the submission is registered and not expired.\n  @param _submissionID The address of the submission.\n  @return Whether the submission is registered or not."
+            },
+            "functionSelector": "c3c5a547",
+            "id": 290,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isRegistered",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 286,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 285,
+                  "mutability": "mutable",
+                  "name": "_submissionID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 290,
+                  "src": "1876:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 284,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1876:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1875:23:2"
+            },
+            "returnParameters": {
+              "id": 289,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 288,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 290,
+                  "src": "1930:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 287,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1930:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1929:6:2"
+            },
+            "scope": 291,
+            "src": "1854:82:2",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "external"
+          }
+        ],
+        "scope": 292,
+        "src": "1032:2255:2"
+      }
+    ],
+    "src": "154:3133:2"
+  },
+  "legacyAST": {
+    "absolutePath": "/E/Code/Repos/JuanuMusic/humanitweet/humanitweet-contracts/contracts/IProofOfHumanity.sol",
+    "exportedSymbols": {
+      "IERC20": [
+        516
+      ],
+      "IProofOfHumanity": [
+        268
+      ],
+      "IProofOfHumanityProxy": [
+        291
+      ]
+    },
+    "id": 292,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 252,
+        "literals": [
+          "solidity",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "154:23:2"
+      },
+      {
+        "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "id": 253,
+        "nodeType": "ImportDirective",
+        "scope": 292,
+        "sourceUnit": 517,
+        "src": "181:56:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 268,
+        "linearizedBaseContracts": [
+          268
+        ],
+        "name": "IProofOfHumanity",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 254,
+              "nodeType": "StructuredDocumentation",
+              "src": "281:201:2",
+              "text": "@dev Return true if the submission is registered and not expired.\n  @param _submissionID The address of the submission.\n  @return Whether the submission is registered or not."
+            },
+            "functionSelector": "c3c5a547",
+            "id": 261,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isRegistered",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 257,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 256,
+                  "mutability": "mutable",
+                  "name": "_submissionID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 261,
+                  "src": "510:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 255,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "510:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "509:23:2"
+            },
+            "returnParameters": {
+              "id": 260,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 259,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 261,
+                  "src": "556:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 258,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "556:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "555:6:2"
+            },
+            "scope": 268,
+            "src": "488:74:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 262,
+              "nodeType": "StructuredDocumentation",
+              "src": "574:124:2",
+              "text": "@dev Return the number of submissions irrespective of their status.\n  @return The number of submissions."
+            },
+            "functionSelector": "76c23ff1",
+            "id": 267,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submissionCounter",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 263,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "730:2:2"
+            },
+            "returnParameters": {
+              "id": 266,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 265,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 267,
+                  "src": "756:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 264,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "756:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "755:6:2"
+            },
+            "scope": 268,
+            "src": "704:58:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 292,
+        "src": "241:530:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 269,
+          "nodeType": "StructuredDocumentation",
+          "src": "775:255:2",
+          "text": "  @title ProofOfHumanityProxy\n  A proxy contract for ProofOfHumanity that implements a token interface to interact with other dapps.\n  Note that it isn't an ERC20 and only implements its interface in order to be compatible with Snapshot."
+        },
+        "fullyImplemented": false,
+        "id": 291,
+        "linearizedBaseContracts": [
+          291
+        ],
+        "name": "IProofOfHumanityProxy",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 270,
+              "nodeType": "StructuredDocumentation",
+              "src": "1236:136:2",
+              "text": "@dev Changes the address of the the related ProofOfHumanity contract.\n  @param _PoH The address of the new contract."
+            },
+            "functionSelector": "ee864d55",
+            "id": 276,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "changePoH",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 274,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 273,
+                  "mutability": "mutable",
+                  "name": "_PoH",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 276,
+                  "src": "1397:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IProofOfHumanity_$268",
+                    "typeString": "contract IProofOfHumanity"
+                  },
+                  "typeName": {
+                    "id": 272,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 271,
+                      "name": "IProofOfHumanity",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 268,
+                      "src": "1397:16:2"
+                    },
+                    "referencedDeclaration": 268,
+                    "src": "1397:16:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IProofOfHumanity_$268",
+                      "typeString": "contract IProofOfHumanity"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1396:23:2"
+            },
+            "returnParameters": {
+              "id": 275,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1436:0:2"
+            },
+            "scope": 291,
+            "src": "1378:59:2",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 277,
+              "nodeType": "StructuredDocumentation",
+              "src": "1449:117:2",
+              "text": "@dev Changes the address of the the governor.\n  @param _governor The address of the new governor."
+            },
+            "functionSelector": "e4c0aaf4",
+            "id": 282,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "changeGovernor",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 280,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 279,
+                  "mutability": "mutable",
+                  "name": "_governor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 282,
+                  "src": "1596:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 278,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1596:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1595:19:2"
+            },
+            "returnParameters": {
+              "id": 281,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1631:0:2"
+            },
+            "scope": 291,
+            "src": "1572:60:2",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 283,
+              "nodeType": "StructuredDocumentation",
+              "src": "1646:202:2",
+              "text": "@dev Returns true if the submission is registered and not expired.\n  @param _submissionID The address of the submission.\n  @return Whether the submission is registered or not."
+            },
+            "functionSelector": "c3c5a547",
+            "id": 290,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isRegistered",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 286,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 285,
+                  "mutability": "mutable",
+                  "name": "_submissionID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 290,
+                  "src": "1876:21:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 284,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1876:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1875:23:2"
+            },
+            "returnParameters": {
+              "id": 289,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 288,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 290,
+                  "src": "1930:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 287,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1930:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1929:6:2"
+            },
+            "scope": 291,
+            "src": "1854:82:2",
+            "stateMutability": "view",
+            "virtual": true,
+            "visibility": "external"
+          }
+        ],
+        "scope": 292,
+        "src": "1032:2255:2"
+      }
+    ],
+    "src": "154:3133:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-05-24T22:22:14.205Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "isRegistered(address)": {
+        "details": "Return true if the submission is registered and not expired.",
+        "params": {
+          "_submissionID": "The address of the submission."
+        },
+        "returns": {
+          "_0": "Whether the submission is registered or not."
+        }
+      },
+      "submissionCounter()": {
+        "details": "Return the number of submissions irrespective of their status.",
+        "returns": {
+          "_0": "The number of submissions."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

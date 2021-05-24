@@ -2,33 +2,46 @@ import React from "react";
 import TweetDisplay from "./TweetDisplay";
 
 interface ITweetListState {
-    tweets: ITweetData[]
+  tweets: IHumanitweetNft[];
 }
 
-export default class TweetList extends React.Component<any, ITweetListState> {
-    constructor(props: any) {
-        super(props);
+interface ITweetEditorProps extends IBaseHumanitweetProps{}
 
-        this.state = {
-            tweets: []
-        };
+export default class TweetList extends React.Component<
+  ITweetEditorProps,
+  ITweetListState
+> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      tweets: [],
+    };
+  }
+
+  componentDidMount() {
+    this.refreshTweets();
+  }
+
+  refreshTweets = async () => {
+    const contract = this.props.drizzle.contracts["Humanitweet"];
+
+    const counter = await contract.methods.tokenCounter().call();
+    const tweets: IHumanitweetNft[] = [];
+    for (let tokenId = counter - 1; tokenId >= 0; tokenId--) {
+      const tokenURI = await contract.methods.tokenURI(tokenId).call();
+      tweets.push({ tokenId: tokenId, tokenURI: tokenURI });
     }
 
-    componentDidMount() {
-        this.refreshTweets();
-    }
+    this.setState({ tweets: tweets });
+  };
 
-    refreshTweets = async () => {
-        const loadedTweets: ITweetData[] = [
-            {text: "Test hardcoded Tweet", author: "juanumusic"},
-            {text: "Another hardcoded tweet", author: "another_user"},
-        ]
-        this.setState({tweets: loadedTweets});
-    }
-
-    render() {
-        return(
-            this.state.tweets.map(tweet => <div><TweetDisplay tweet={tweet} /><hr /></div>)
-        )
-    }
+  render() {
+    return this.state.tweets.map((humanitweetNft, index) => (
+      <div key={index}>
+        <TweetDisplay drizzle={this.props.drizzle} drizzleState={this.props.drizzleState} humanitweetNft={humanitweetNft} />
+        <hr />
+      </div>
+    ));
+  }
 }

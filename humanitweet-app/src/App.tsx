@@ -7,7 +7,6 @@ import Container from "react-bootstrap/Container";
 import TweetEditor from "./components/TweetEditor";
 import TweetList from "./components/TweetList";
 import WalletConnector from "./components/WalletConnector";
-import MyComponent from "./components/MyComponent";
 
 interface IAppState {
   isUserConnected?: boolean;
@@ -23,7 +22,8 @@ export default function App() {
       <DrizzleContext.Consumer>
         {(drizzleContext: any) => {
           const { drizzle, drizzleState, initialized } = drizzleContext;
-          console.log("STATE!", drizzleState);
+          console.log("Drizzle", drizzle);
+          console.log("Drizzle State:", drizzleState);
           if (!initialized || drizzleState.accounts.length === 0) {
             return "Loading...";
           }
@@ -33,7 +33,7 @@ export default function App() {
               <h1>Humanitweet</h1>
               <TweetEditor drizzle={drizzle} drizzleState={drizzleState} disabled={drizzleState.accounts.length === 0} />
               <hr />
-              <TweetList />
+              <TweetList drizzle={drizzle} drizzleState={drizzleState} />
               {/* <MyComponent drizzle={drizzle} drizzleState={drizzleState} /> */}
             </Container>
           );
