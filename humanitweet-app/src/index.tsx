@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
 //import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
+import DrizzleApp from "./App";
 
 ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <DrizzleApp />
     </React.StrictMode>,
   document.getElementById("root")
 );

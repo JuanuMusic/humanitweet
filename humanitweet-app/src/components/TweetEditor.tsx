@@ -5,17 +5,16 @@ import Col from "react-bootstrap/Col";
 import FormGroup from "react-bootstrap/FormGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
-import StorageService from "../services/StorageService";
+import IPFSStorageService from "../services/IPFSStorageService";
+import HumanitweetService from "../services/HumanitweetOnChainService";
 
 interface ITweetEditorState {
   text: string;
-  isHuman: boolean
 }
 
-interface ITweetEditorProps {
+interface ITweetEditorProps extends IBaseHumanitweetProps {
   disabled?: boolean;
-  drizzle: any;
-  drizzleState: any;
+  onNewTweetSent(stackId: number): void;
 }
 
 export default class TweetEditor extends React.Component<
@@ -26,38 +25,27 @@ export default class TweetEditor extends React.Component<
     super(props);
 
     this.state = {
-      isHuman: false,
-      text: ""
+      text: "",
     };
   }
 
-  componentDidMount() {
-    this.initialize();
-  }
-
-  initialize = async () => {
-    const pohContract = this.props.drizzle.contracts["DummyProofOfHumanity"];
-    const isHuman = await pohContract.methods.isRegistered(this.props.drizzleState.accounts[0]).call();
-    console.log("Is human?",isHuman);  
-    this.setState({isHuman: isHuman});
+  isDisabled() {
+    return (
+      !this.props.appState ||
+      !this.props.appState.userProfile ||
+      !this.props.appState.userProfile.registered
+    );
   }
 
   handleSendTweet = async () => {
-
-    const tweetData : ITweetData = {
+    const tweetData: ITweetData = {
       text: this.state.text,
-      author: this.props.drizzleState.accounts[0] as string
-    }
-    const storage = new StorageService();
+      author: this.props.appState.account,
+    };
 
-    const result = await storage.uploadTweet(tweetData);
-    console.log("TODO: store humanitweet on contract with url",`http://127.0.0.1:8080/ipfs/${result.path}`);
-    console.log(this.props.drizzle.contracts);
-    const tweetContract = this.props.drizzle.contracts["Humanitweet"];
-    
-    const callResponse = await tweetContract.methods.publishHumanitweet(`http://127.0.0.1:8080/ipfs/${result.path}`).send({from: this.props.drizzleState.accounts[0]});;
-    console.log(callResponse);
-    
+    await HumanitweetService.publishTweet(tweetData, this.props.drizzle);
+
+    this.setState({ text: "" });
   };
 
   render() {
@@ -70,18 +58,16 @@ export default class TweetEditor extends React.Component<
                 as="textarea"
                 placeholder="What's happening?"
                 rows={3}
+                value={this.state.text}
                 onChange={(e) => this.setState({ text: e.target.value })}
-                disabled={this.props.disabled || !this.state.isHuman}
+                disabled={this.isDisabled()}
               ></FormControl>
             </FormGroup>
           </Col>
         </Row>
         <Row>
           <Col xs={12} className="d-flex justify-content-end">
-            <Button
-              disabled={this.props.disabled || !this.state.isHuman}
-              onClick={this.handleSendTweet}
-            >
+            <Button disabled={this.isDisabled()} onClick={this.handleSendTweet}>
               Tweet
             </Button>
           </Col>

@@ -13,8 +13,12 @@
     "@types/node": "^12.20.13",
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "graphql": "^15.5.0",
     "ipfs-http-client": "^50.0.0",
+    "moment": "^2.29.1",
+    "nft.storage": "^1.4.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
@@ -45,5 +49,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }

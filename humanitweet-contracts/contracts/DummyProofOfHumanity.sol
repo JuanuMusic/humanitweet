@@ -8,8 +8,8 @@ contract DummyProofOfHumanity is IProofOfHumanityProxy {
     address _governor;
     /** @dev Constructor.
      */
-    constructor() {
-        _governor = msg.sender;
+    constructor(address governor) {
+        _governor = governor;
     }
     //constructor(IProofOfHumanity _PoH) virtual;
 
