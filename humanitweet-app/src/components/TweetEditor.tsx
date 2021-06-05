@@ -37,12 +37,18 @@ export default class TweetEditor extends React.Component<
     );
   }
 
+  /**
+   * Handler for when user clicks on the "Send tweet" button.
+   */
   handleSendTweet = async () => {
+
+    // Generate the tweet data with the content and the author address
     const tweetData: ITweetData = {
       text: this.state.text,
       author: this.props.appState.account,
     };
 
+    // Publish the tyweet through the Humanitweet Service
     await HumanitweetService.publishTweet(tweetData, this.props.drizzle);
 
     this.setState({ text: "" });

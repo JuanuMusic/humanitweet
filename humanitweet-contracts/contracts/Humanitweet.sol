@@ -10,16 +10,25 @@ contract Humanitweet is ERC721, Ownable {
     using Strings for uint256;
 
     struct HumanitweetData {
+        
+        // URI of the NFT data
         string tokenURI;
+        
+        // Date at which the tweet was minted
         uint256 date;
+        
         // Ammount given as support
         uint256 supportGiven;
+        
         // Total number of unique humans that support this tweet
-        uint256 supporters;
+        uint256 supportersCount;
     }
     
-    // Optional mapping for token URIs
+    // Mapping for NFTS
     mapping (uint256 => HumanitweetData) private _humanitweets;
+
+    // Mapping for humans that support each tweet
+    mapping(uint256 => mapping(address => bool)) supporters;
 
     IProofOfHumanityProxy public pohProxy;
     // Base URI
@@ -38,27 +47,34 @@ contract Humanitweet is ERC721, Ownable {
     }
 
     function publishHumanitweet(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
+        
+        // Get the new token iD
         uint256 newItemId = tokenCounter;
+
+        // Mint the NFT with the new ID
         _safeMint(_msgSender(), newItemId);
+
+        // Generate the humanitweet NFT storage data
         HumanitweetData memory humanitweet = HumanitweetData({
             date: block.timestamp,
-            tokenURI: newTokenURI
+            tokenURI: newTokenURI,
+            supportGiven: 0,
+            supportersCount: 0
         });
 
+        // Set the humanitweet dat to the token
         _setHumanitweet(newItemId, humanitweet);
-        //_setTokenURI(newItemId, newTokenURI);
+        
+        // Update the token counter
         tokenCounter = tokenCounter +1;
+
+        // Return the new token ID
         return newItemId;
     }
 
      function setBaseURI(string memory baseURI_) external onlyOwner() {
         _baseURIextended = baseURI_;
     }
-    
-    // function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-    //     require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
-    //     _tokenURIs[tokenId] = _tokenURI;
-    // }
     
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseURIextended;
@@ -87,8 +103,7 @@ contract Humanitweet is ERC721, Ownable {
         return string(abi.encodePacked(base, tokenId.toString()));
     }
 
-    function getHumanitweet(uint256 tokenId) public view virtual returns (HumanitweetData memory) 
-    {
+    function getHumanitweet(uint256 tokenId) public view virtual returns (HumanitweetData memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         return _humanitweets[tokenId];
     }
