@@ -8,12 +8,12 @@ Another problem is the amount of fake profiles that can be generated 🦹‍♂�
 
 Humanitweet is a twitter clone that runs on the Ethereum Blockchain ⛓️, and makes it a *MUST* that the user participating on it, is a Human being.
 
-TRo achieve this, a user must be a registered and approved Human under the [Proof of Humanity registry](https://www.proofofhumanity.id/) to be able to generate a Humanitweet.
+To achieve this, a user must be a registered and approved Human under the [Proof of Humanity registry](https://www.proofofhumanity.id/) to be able to generate a Humanitweet.
 
 ## How it works?
 The Humanitweet is an ERC721. Everytime an address tries to create a new Humanitweet, the contract validates that the creator address is registered on the [Proof of Humanity registry](https://www.proofofhumanity.id/).
 
-If the addres is an actual Human, a new NFT with symbol "HWTW" is minted and sent to the Human that created it, and a JSON file is generated with the tweet and the author, and uploaded to a decentralized storage system.
+If the addres is an actual Human, a new NFT with symbol "HTWT" is minted and sent to the Human that created it, and a JSON file is generated with the tweet and the author, and uploaded to a decentralized storage system.
 
 ### Storage system
 The storage system is still to be defined. A potential candidate for this could be [ARweave](https://www.arweave.org/) since it has the potential to store data for a long time (200 years) as opposed to [FileCoin](https://filecoin.io/) which requires monthly payments. **Other solutions suggestions are welcomed !🙌**
