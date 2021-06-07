@@ -7,6 +7,7 @@ import "./IProofOfHumanity.sol";
 
 contract Humanitweet is ERC721, Ownable {
 
+    string HUMAN_NOT_REGISTERED = "HUMAN_NOT_REGISTERED";
     using Strings for uint256;
 
     struct HumanitweetData {
@@ -37,7 +38,7 @@ contract Humanitweet is ERC721, Ownable {
     uint256 public tokenCounter;
 
     modifier isHuman(address _submission) {
-        require(pohProxy.isRegistered(_submission), "User not registered on Proof of Humanity");
+        require(pohProxy.isRegistered(_submission), HUMAN_NOT_REGISTERED);
         _;
     }
 

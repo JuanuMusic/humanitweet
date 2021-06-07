@@ -6,6 +6,7 @@ import "./IProofOfHumanity.sol";
 contract DummyProofOfHumanity is IProofOfHumanityProxy {
 
     address _governor;
+    mapping(address => bool) _registrants;
     /** @dev Constructor.
      */
     constructor(address governor) {
@@ -29,6 +30,10 @@ contract DummyProofOfHumanity is IProofOfHumanityProxy {
      *  @return Whether the submission is registered or not.
      */
     function isRegistered(address _submissionID) override public view virtual returns (bool) {
-        return _submissionID == _governor;
+        return _registrants[_submissionID];
+    }
+
+    function register(address _submissionID) public {
+        _registrants[_submissionID] = true;
     }
 }
