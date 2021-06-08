@@ -2,6 +2,7 @@
 pragma solidity 0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IProofOfHumanity.sol";
 
@@ -29,22 +30,22 @@ contract Humanitweet is ERC721, Ownable {
     mapping (uint256 => HumanitweetData) private _humanitweets;
 
     // Mapping for humans that support each tweet
-    mapping(uint256 => mapping(address => bool)) supporters;
+    mapping(uint256 => mapping(address => bool)) _supporters;
 
-    IProofOfHumanityProxy public pohProxy;
+    IProofOfHumanity public _poh;
     // Base URI
     string private _baseURIextended;
 
     uint256 public tokenCounter;
 
     modifier isHuman(address _submission) {
-        require(pohProxy.isRegistered(_submission), HUMAN_NOT_REGISTERED);
+        require(_poh.isRegistered(_submission), HUMAN_NOT_REGISTERED);
         _;
     }
 
-    constructor(address pPohProxy) public ERC721("Humanitweet", "HTWT") {
+    constructor(address poh) public ERC721("Humanitweet", "HTWT") {
         tokenCounter = 0;
-        pohProxy = IProofOfHumanityProxy(pPohProxy);
+        _poh = IProofOfHumanity(poh);
     }
 
     function publishHumanitweet(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
@@ -107,5 +108,26 @@ contract Humanitweet is ERC721, Ownable {
     function getHumanitweet(uint256 tokenId) public view virtual returns (HumanitweetData memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         return _humanitweets[tokenId];
+    }
+
+    /**
+     * Gives support to this tweet and burns the UBI. 
+     * Supporters count is only added once per human.
+     * If a Human gives support multiple times it will only count as one supporter.
+     */
+    function support(uint256 tokenId, uint256 ubiAmount) public {
+        
+        // Add the amount of support given
+        _humanitweets[tokenId].supportGiven += ubiAmount;
+
+        // If is first support, add 1 supporter.
+        if(!_supporters[tokenId][_msgSender()]) {
+            _supporters[tokenId][_msgSender()] = true;
+            _humanitweets[tokenId].supportersCount += 1;
+        }
+
+        // Burn the UBI.
+        bool success = _poh.transferFrom(_msgSender(), address(_poh), ubiAmount);
+        require(success, "sell failed");
     }
 }
