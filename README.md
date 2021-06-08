@@ -13,7 +13,7 @@ To achieve this, a user must be a registered and approved Human under the [Proof
 ## How it works?
 The Humanitweet is an ERC721. Everytime an address tries to create a new Humanitweet, the contract validates that the creator address is registered on the [Proof of Humanity registry](https://www.proofofhumanity.id/).
 
-If the addres is an actual Human, a new NFT with symbol "HTWT" is minted and sent to the Human that created it, and a JSON file is generated with the tweet and the author, and uploaded to a decentralized storage system.
+If the address is an actual Human, a new NFT with symbol "HTWT" is minted and sent to the Human that created it, and a JSON file is generated with the tweet and the author, and uploaded to a decentralized storage system.
 
 ### Storage system
 The storage system is still to be defined. A potential candidate for this could be [ARweave](https://www.arweave.org/) since it has the potential to store data for a long time (200 years) as opposed to [FileCoin](https://filecoin.io/) which requires monthly payments. **Other solutions suggestions are welcomed !🙌**
@@ -30,7 +30,7 @@ PRs will be accepted to help improving the architecture.
 - Run the react app inside the directory (`./humanitweet-app`) using `npm start`.
 
 ## How can I help?
-This is still a Work in Progress so any kind of improvement is valid(architecture, protocol, contracts, frontend app, suggestions, ideas, etc).
+This is still a Work in Progress so any kind of improvement is valid (architecture, protocol, contracts, frontend app, suggestions, ideas, etc).
 
-- If you have a question, suggestion or idea, please, submit an Issude
-- If you have an code improvement, fork the repository and sned a PR so that we can review it, discuss it, and potentially merge it.
+- If you have a question, suggestion or idea, please, submit an Issue
+- If you have a code improvement, fork the repository and sned a PR so that we can review it, discuss it, and potentially merge it.
