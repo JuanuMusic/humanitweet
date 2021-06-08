@@ -5,11 +5,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IProofOfHumanity.sol";
+import "./IUBI.sol";
 
 contract Humanitweet is ERC721, Ownable {
 
     string HUMAN_NOT_REGISTERED = "HUMAN_NOT_REGISTERED";
     using Strings for uint256;
+    IUBI _ubi;
 
     struct HumanitweetData {
         
@@ -43,9 +45,10 @@ contract Humanitweet is ERC721, Ownable {
         _;
     }
 
-    constructor(address poh) public ERC721("Humanitweet", "HTWT") {
+    constructor(address poh, address ubi) public ERC721("Humanitweet", "HTWT") {
         tokenCounter = 0;
         _poh = IProofOfHumanity(poh);
+        _ubi = IUBI(ubi);
     }
 
     function publishHumanitweet(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
@@ -127,7 +130,6 @@ contract Humanitweet is ERC721, Ownable {
         }
 
         // Burn the UBI.
-        bool success = _poh.transferFrom(_msgSender(), address(_poh), ubiAmount);
-        require(success, "sell failed");
+        _ubi.burn(_msgSender(), ubiAmount);
     }
 }

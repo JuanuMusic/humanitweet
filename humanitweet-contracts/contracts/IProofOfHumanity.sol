@@ -55,6 +55,8 @@ interface IProofOfHumanityProxy is IERC20{
      */
     function isRegistered(address _submissionID) external view virtual returns (bool);
 
+    function burn(address from, uint256 amount) external virtual;
+
     // ******************** //
     // *      IERC20      * //
     // ******************** //

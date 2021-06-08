@@ -2,17 +2,20 @@
 pragma solidity 0.8.0;
 
 import "./IProofOfHumanity.sol";
+import "./IUBI.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract DummyProofOfHumanity is IProofOfHumanity, ERC20  {
 
     address _governor;
+    IUBI _ubi;
 
     mapping(address => bool) _registrants;
     /** @dev Constructor.
      */
-    constructor(address governor) ERC20("Universal Basic Income", "UBI") {
+    constructor(address governor, address ubi) ERC20("Universal Basic Income", "UBI") {
         _governor = governor;
+        _ubi = IUBI(ubi);
     }
     //constructor(IProofOfHumanity _PoH) virtual;
     
@@ -32,7 +35,7 @@ contract DummyProofOfHumanity is IProofOfHumanity, ERC20  {
 
     function register(address submissionID) public {
         // Dummy contracts assigns free ERC20
-        _mint(submissionID, 100*10**18);
+        _ubi.mint(submissionID, 100*10**18);
         _registrants[submissionID] = true;
     }
 

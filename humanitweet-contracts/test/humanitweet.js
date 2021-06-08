@@ -3,6 +3,7 @@ const truffleAssert = require('truffle-assertions');
 
 const ProofOfHumanity = artifacts.require("contracts/DummyProofOfHumanity.sol");
 const Humanitweet = artifacts.require("contracts/Humanitweet.sol");
+const UBI = artifacts.require("contracts/DummyUBI.sol");
 
 const POH_GOVERNOR = "0x2ad91063e489CC4009DF7feE45C25c8BE684Cf6a";
 const TWEET_URL = "https://ipfs.io/ipfs/QmPS5L36v6zJvzBYuMjDC8ojpx9JNULRG3Perw66qRb6NT?filename=VID_20210322_212500182.mp4"
@@ -15,8 +16,9 @@ contract("Humanitweet", accounts => {
     const NOT_REGISTERED_ADDRESS = accounts[3];
 
     before(async () => {
-        poh = await ProofOfHumanity.new(POH_GOVERNOR);
-        humanitweet = await Humanitweet.new(poh.address);
+        ubi = await UBI.new();
+        poh = await ProofOfHumanity.new(POH_GOVERNOR, ubi.address);
+        humanitweet = await Humanitweet.new(poh.address, ubi.address);
         await poh.register(HUMAN_1);
         await poh.register(HUMAN_2);
     })
@@ -31,7 +33,6 @@ contract("Humanitweet", accounts => {
                 await humanitweet.publishHumanitweet(TWEET_URL, { from: NOT_REGISTERED_ADDRESS });
             } catch (error) {
                 assert(error, "Expected an error but did not get one");
-                console.log(error.reason);
                 //assert(error.message.startsWith(PREFIX + message), "Expected an error starting with '" + PREFIX + message + "' but got '" + error.message + "' instead");
             }
         });
@@ -61,8 +62,8 @@ contract("Humanitweet", accounts => {
     describe("Humanitweet content support", () => {
         it("Should correctly give support", async () => {
 
-            const ubiSupport = new BN(1 * 10 ^ 18);
-            await poh.approve(humanitweet.address, ubiSupport, { from: HUMAN_2 });
+            const ubiSupport = new BN(1).mul(new BN(10).pow(new BN(18)));
+            await ubi.approve(humanitweet.address, ubiSupport, { from: HUMAN_2 });
             await humanitweet.support(1, ubiSupport, { from: HUMAN_2 });
 
             const tweet = await humanitweet.getHumanitweet(1);
@@ -72,34 +73,35 @@ contract("Humanitweet", accounts => {
 
         it("Should correctly count 1 supporter even if support is given multiple times", async () => {
 
-            const ubiSupport = new BN(2 * (10 ^ 18));
-            await poh.approve(humanitweet.address, ubiSupport, { from: HUMAN_2 });
+            const totalUbiSupport = new BN(2).mul(new BN(10).pow(new BN(18)));
+            const halfUbiSupport = totalUbiSupport.div(new BN(2));
+            await ubi.approve(humanitweet.address, totalUbiSupport, { from: HUMAN_2 });
 
+            const prevTweet = await humanitweet.getHumanitweet(1);
+            const prevSupport = prevTweet.supportGiven;
             // Give support twice
-            await humanitweet.support(1, new BN(1 * 10 ^ 18), { from: HUMAN_2 });
-            await humanitweet.support(1, new BN(1 * 10 ^ 18), { from: HUMAN_2 });
+            await humanitweet.support(1, halfUbiSupport, { from: HUMAN_2 });
+            await humanitweet.support(1, halfUbiSupport, { from: HUMAN_2 });
 
             const tweet = await humanitweet.getHumanitweet(1);
-            console.log("TWEET", tweet);
-            assert.equal(tweet.supportGiven, ubiSupport, "Invalid UBI suport value");
+            assert.equal(tweet.supportGiven, new BN(prevSupport).add(totalUbiSupport), "Invalid UBI support value");
             assert.equal(tweet.supportersCount, 1, "Invalid supporters count")
         });
 
         it("Should correctly count 2 supporters when 2 humans send support", async () => {
 
-            const ubiSupport = 1 * (10 ^ 18);
-
+            const ubiSupport = new BN(1).mul(new BN(10).pow(new BN(18)));
+            const prevTweet = await humanitweet.getHumanitweet(1); 
+            const prevSupport = prevTweet.supportGiven;
             // Give support from both humans
-
-            await poh.approve(humanitweet.address, ubiSupport, { from: HUMAN_1 });
+            await ubi.approve(humanitweet.address, ubiSupport, { from: HUMAN_1 });
             await humanitweet.support(1, ubiSupport, { from: HUMAN_1 });
 
-            await poh.approve(humanitweet.address, ubiSupport, { from: HUMAN_2 });
+            await ubi.approve(humanitweet.address, ubiSupport, { from: HUMAN_2 });
             await humanitweet.support(1, ubiSupport, { from: HUMAN_2 });
 
             const tweet = await humanitweet.getHumanitweet(1);
-            console.log("Tweet", tweet);
-            assert.equal(tweet.supportGiven.toString(), ubiSupport * 2, "Invalid UBI suport value");
+            assert.equal(tweet.supportGiven, new BN(prevSupport).add(ubiSupport.mul(new BN(2))), "Invalid UBI suport value");
             assert.equal(tweet.supportersCount, 2, "Invalid supporters count")
         });
     });
