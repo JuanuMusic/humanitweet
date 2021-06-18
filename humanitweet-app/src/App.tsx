@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import TweetEditor from "./components/TweetEditor";
 import TweetList from "./components/TweetList";
 import PohAPI from "./DAL/PohAPI";
+import DummyPOHController from "./DummyPOHController";
 
 const drizzle = new Drizzle(drizzleOptions as IDrizzleOptions);
 
@@ -58,7 +59,6 @@ class App extends React.Component<AppProps, AppState> {
   // loadLatestTweets = async () => {
   //   // Get drizzle state
   //   const { drizzleState } = this.props.drizzleContext;
-    
 
   //   const contract = drizzleState.contracts["Humanitweet"];
 
@@ -107,7 +107,11 @@ class App extends React.Component<AppProps, AppState> {
           drizzle={drizzle}
           drizzleState={drizzleState}
         />
-        {/* <MyComponent drizzle={drizzle} drizzleState={drizzleState} /> */}
+        <DummyPOHController
+          appState={this.state}
+          drizzle={drizzle}
+          drizzleState={drizzleState}
+        />
       </Container>
     );
   }

@@ -104,5 +104,19 @@ contract("Humanitweet", accounts => {
             assert.equal(tweet.supportGiven, new BN(prevSupport).add(ubiSupport.mul(new BN(2))), "Invalid UBI suport value");
             assert.equal(tweet.supportersCount, 2, "Invalid supporters count")
         });
+
+        it("Should fail UBI balance is not enough", async () => {
+            const currentUBIBalance = await ubi.balanceOf(HUMAN_1, { from: HUMAN_1 });
+            const ubiSupport = new BN(1).mul(new BN(10).pow(new BN(18))).add(currentUBIBalance);
+
+            try {
+                // Give support from both humans
+                await ubi.approve(humanitweet.address, ubiSupport, { from: HUMAN_1 });
+                await humanitweet.support(1, ubiSupport, { from: HUMAN_1 });
+                
+            } catch (error) {
+                assert(error, "Expected an error but did not get one");
+            }
+        })
     });
 });

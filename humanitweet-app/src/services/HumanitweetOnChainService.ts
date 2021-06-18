@@ -1,10 +1,22 @@
+import BN from "bn.js";
 import IPFSStorageService from "./IPFSStorageService";
 
 interface IHumanitweetService {
+    giveSupport(tokenID: number, amount: BN, from: string, drizzle: any) : Promise<void>;
     publishTweet(tweetData: ITweetData, drizzle: any) : Promise<void>;
 }
 
 const HumanitweetService: IHumanitweetService = {
+
+    async giveSupport(tokenID: number, amount: BN, from: string, drizzle: any) {
+        console.log("TokenID", tokenID);
+        console.log("Amount", amount);
+        // Create as NFT on the humanitweet contract
+        const tweetContract = drizzle.contracts["Humanitweet"];
+        await tweetContract.methods
+          .support(tokenID, amount)
+          .send({ from: from });
+    }, 
     
     /**
      * Takes care of publishing a tween. 

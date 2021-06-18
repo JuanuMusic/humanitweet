@@ -4,19 +4,31 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 
 import PohAPI from "../DAL/PohAPI";
-import { Card } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import moment from "moment";
+import { Gem } from "react-bootstrap-icons";
+import HumanitweetService from "../services/HumanitweetOnChainService";
 
 interface ITweetDisplayProps extends IBaseHumanitweetProps {
   humanitweetNft: IHumanitweetNft;
+  onBurnUBIsClicked(tokenId: number) : any;
 }
 
 interface ITweetDisplayState {
+  tokenID: number;
   authorImage: string;
   authorDisplayName: string;
   authorFullName: string;
   text: string;
   date: string;
+  supportGiven: number;
 }
 
 interface IEvidence {
@@ -37,14 +49,17 @@ export default class TweetDisplay extends React.Component<
   ITweetDisplayProps,
   ITweetDisplayState
 > {
+
   constructor(props: ITweetDisplayProps) {
     super(props);
     this.state = {
+      tokenID: -1,
       authorImage: "",
       authorDisplayName: "Loading...",
       authorFullName: "Loading...",
       text: "Loading...",
       date: "Loading...",
+      supportGiven: 0,
     };
   }
 
@@ -83,6 +98,7 @@ export default class TweetDisplay extends React.Component<
         authorFullName: `${userRegistration.first_name} ${userRegistration.last_name}`,
         authorImage: userRegistration.photo,
         text: data.text,
+        
         date:
           this.props.humanitweetNft.creationDate &&
           moment(this.props.humanitweetNft.creationDate).format("MMM DD, Y"),
@@ -108,19 +124,41 @@ export default class TweetDisplay extends React.Component<
     // }
   }
 
+  handleBurnUBIsClicked = async () => {
+    this.props.onBurnUBIsClicked && this.props.onBurnUBIsClicked(this.state.tokenID);
+  }
+
   render() {
     return (
       <Card style={{ width: "100%" }}>
         {/* <Card.Img variant="bottom" src={this.state.authorImage} /> */}
         <Card.Body>
           <Container>
-            <blockquote className="blockquote mb-0">
-              <p> {this.state.text} </p>
-              <footer className="blockquote-footer">
-                {this.state.authorFullName} <br />
-                <span className="fw-light">{this.state.date}</span>
-              </footer>
-            </blockquote>
+            <Row>
+              <blockquote className="blockquote mb-0">
+                <p> {this.state.text} </p>
+                <footer className="blockquote-footer">
+                  {this.state.authorFullName} <br />
+                  <span className="fw-light">{this.state.date}</span>
+                </footer>
+              </blockquote>
+            </Row>
+            <Row className="align-items-center">
+              <Col>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="immortalize_tooltip">
+                      Immortalize this tweet by burning some UBIs!
+                    </Tooltip>
+                  }
+                >
+                  <Button onClick={this.handleBurnUBIsClicked}>
+                    <Gem /> <span>{this.props.humanitweetNft.supportGiven}</span>
+                  </Button>
+                </OverlayTrigger>
+              </Col>
+            </Row>
           </Container>
           {/* <Button variant="primary">Go somewhere</Button> */}
         </Card.Body>
