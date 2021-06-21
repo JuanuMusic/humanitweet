@@ -39,9 +39,11 @@ contract Humanitweet is ERC721, Ownable {
     string private _baseURIextended;
 
     uint256 public tokenCounter;
+    
 
     modifier isHuman(address _submission) {
-        require(_poh.isRegistered(_submission), HUMAN_NOT_REGISTERED);
+        IProofOfHumanity.SubmissionInfo memory info = _poh.getSubmissionInfo(_submission);
+        require(info.registered, HUMAN_NOT_REGISTERED);
         _;
     }
 

@@ -13,6 +13,15 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IProofOfHumanity  is IERC20 {
 
+    struct SubmissionInfo {
+        uint8 status  ;
+        uint64 submissionTime   ;
+        uint64 index   ;
+        bool registered ;
+        bool hasVouched;
+        uint256 numberOfRequests;
+    }
+
     /** @dev Return true if the submission is registered and not expired.
      *  @param _submissionID The address of the submission.
      *  @return Whether the submission is registered or not.
@@ -23,6 +32,8 @@ interface IProofOfHumanity  is IERC20 {
      *  @return The number of submissions.
      */
     function submissionCounter() external view returns (uint);
+
+    function getSubmissionInfo(address _submissionID) external view returns (SubmissionInfo memory);
 
 }
 

@@ -9,6 +9,7 @@ contract DummyProofOfHumanity is IProofOfHumanity, ERC20  {
 
     address _governor;
     IUBI _ubi;
+    mapping(address => SubmissionInfo) _submissions;
 
     mapping(address => bool) _registrants;
     /** @dev Constructor.
@@ -37,10 +38,21 @@ contract DummyProofOfHumanity is IProofOfHumanity, ERC20  {
         // Dummy contracts assigns free ERC20
         _ubi.mint(submissionID, 100*10**18);
         _registrants[submissionID] = true;
+        _submissions[submissionID] = IProofOfHumanity.SubmissionInfo({
+            status: 0,
+            submissionTime: 1616166541,
+            index: 106,
+            registered: true,
+            hasVouched: true,
+            numberOfRequests:  1
+        });
     }
 
     function submissionCounter() external override view returns(uint) { return 0; } 
 
+function getSubmissionInfo(address _submissionID) external override view returns (SubmissionInfo memory) {
+    
+}
     // // /** @dev Returns the balance of a particular submission of the ProofOfHumanity contract.
     // //  *  Note that this function takes the expiration date into account.
     // //  *  @param _submissionID The address of the submission.
