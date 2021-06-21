@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -7,7 +7,8 @@ import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import IPFSStorageService from "../services/IPFSStorageService";
 import HumanitweetService from "../services/HumanitweetOnChainService";
-
+import { useWeb3React } from "@web3-react/core";
+import { Web3Provider } from '@ethersproject/providers'
 interface ITweetEditorState {
   text: string;
 }
@@ -17,68 +18,75 @@ interface ITweetEditorProps extends IBaseHumanitweetProps {
   onNewTweetSent(stackId: number): void;
 }
 
-export default class TweetEditor extends React.Component<
-  ITweetEditorProps,
-  ITweetEditorState
-> {
-  constructor(props: ITweetEditorProps) {
-    super(props);
+export default function TweetEditor(props: ITweetEditorProps) {
+  const [tweetText, setTweetText] = useState("");
+  const [isEditorEnabled, setIsEditorEnabled] = useState(false);
+  const [isSendButtonEnabled, setIsSendButtonEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { chainId, library } = useWeb3React();
+  const context = useWeb3React<Web3Provider>()
 
-    this.state = {
-      text: "",
-    };
-  }
-
-  isDisabled() {
-    return (
-      !this.props.appState ||
-      !this.props.appState.userProfile ||
-      !this.props.appState.userProfile.registered
+  useEffect(() => {
+    setIsEditorEnabled(
+      props.human &&
+        props.human.profile &&
+        props.human.profile.registered &&
+        !isLoading
     );
-  }
+  }, [props.human, props.human.profile, props.human.profile.registered, isLoading]);
 
-  /**
-   * Handler for when user clicks on the "Send tweet" button.
-   */
-  handleSendTweet = async () => {
+  useEffect(() => {
+    setIsSendButtonEnabled(
+      props.human &&
+        props.human.profile &&
+        props.human.profile.registered &&
+        typeof tweetText === "string" && 
+        tweetText !== "" &&
+        !isLoading
+    );
+  }, [props.human, isLoading, tweetText]);
 
+  const handleSendTweet = async () => {
     // Generate the tweet data with the content and the author address
     const tweetData: ITweetData = {
-      text: this.state.text,
-      author: this.props.appState.account,
+      text: tweetText,
+      author: props.human.address,
     };
 
+    setIsLoading(true);
     // Publish the tyweet through the Humanitweet Service
-    await HumanitweetService.publishTweet(tweetData, this.props.drizzle);
+    // console.log("CONTEXT", context);
+    // const provider = await context.connector?.getProvider();
+    // console.log("PROVIDER", provider);
+    await HumanitweetService.publishTweet(tweetData, await context.library?.provider);
 
-    this.setState({ text: "" });
+    setTweetText("");
+    setIsLoading(false);
   };
 
-  render() {
-    return (
-      <Container>
-        <Row>
-          <Col xs={12}>
-            <FormGroup controlId="formTweetEditor">
-              <FormControl
-                as="textarea"
-                placeholder="What's happening?"
-                rows={3}
-                value={this.state.text}
-                onChange={(e) => this.setState({ text: e.target.value })}
-                disabled={this.isDisabled()}
-              ></FormControl>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} className="d-flex justify-content-end">
-            <Button disabled={this.isDisabled()} onClick={this.handleSendTweet}>
-              Tweet
-            </Button>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+  return (
+    <Container>
+      <Row>
+        <Col xs={12}>
+          <FormGroup controlId="formTweetEditor">
+            <FormControl
+              as="textarea"
+              placeholder="What's happening?"
+              rows={3}
+              value={tweetText}
+              onChange={(e) => setTweetText(e.target.value)}
+              disabled={!isEditorEnabled}
+            ></FormControl>
+          </FormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12} className="d-flex justify-content-end">
+          <Button disabled={!isSendButtonEnabled} onClick={handleSendTweet}>
+            Tweet
+          </Button>
+        </Col>
+      </Row>
+    </Container>
+  );
 }

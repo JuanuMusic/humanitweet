@@ -1,5 +1,3 @@
 interface IBaseHumanitweetProps {
-    drizzle: any;
-    drizzleState: any;
-    appState: AppState
+    human: {address: string, profile: POHProfileModel}
   }

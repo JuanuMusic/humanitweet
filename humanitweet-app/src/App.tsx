@@ -1,6 +1,9 @@
-import React from "react";
-import { DrizzleContext } from "@drizzle/react-plugin";
-import { Drizzle, drizzleReducers, IDrizzleOptions } from "@drizzle/store";
+import React, { useEffect, useReducer, useState } from "react";
+import {
+  Web3ReactProvider,
+  useWeb3React,
+  UnsupportedChainIdError,
+} from "@web3-react/core";
 import drizzleOptions from "./drizzleOptions";
 import "./App.css";
 import Container from "react-bootstrap/Container";
@@ -8,130 +11,74 @@ import TweetEditor from "./components/TweetEditor";
 import TweetList from "./components/TweetList";
 import PohAPI from "./DAL/PohAPI";
 import DummyPOHController from "./DummyPOHController";
+//import { InjectedConnector } from "@web3-react/injected-connector";
+import { Web3Provider } from "@ethersproject/providers";
+//import useEagerConnect from "./hooks/useEagerConnect";
+import useHuman from "./hooks/useHuman";
+import { Button, Col, Row } from "react-bootstrap";
+import ConnectWalletDialog from "./components/ConnectWalletDialog";
+import { convertToObject } from "typescript";
+import configService, { IConfiguration } from "./services/configService";
 
-const drizzle = new Drizzle(drizzleOptions as IDrizzleOptions);
+//const drizzle = new Drizzle(drizzleOptions as IDrizzleOptions);
 
-interface AppProps {
-  drizzleContext: any;
+interface IAppProps {}
+
+interface IAppState {
+  config: IConfiguration | undefined;
 }
-class App extends React.Component<AppProps, AppState> {
-  private _pendingTransactionStacks: number[] = [];
 
-  constructor(props: AppProps) {
-    super(props);
-    this.state = {
-      account: "",
-    };
-  }
+function appReducer(state: IAppState, action: any) {}
 
-  async setAccount(account: string) {
-    if (account !== this.state.account) {
-      const registration = await PohAPI.profiles.getByAddress(account);
+export default function App(props: IAppProps) {
+  const [appState, dispatch] = useReducer<any, IAppState>(
+    appReducer,
+    {} as IAppState,
+    (s: IAppState) => {}
+  );
 
-      if (registration && registration.registered) {
-        this.setState({ account: account, userProfile: registration });
-      }
-    }
-  }
+  const [isConnectDialogVisible, setIsConnectDialogVisible] = useState(false);
+  const human = useHuman();
+  const _pendingTransactionStacks: number[] = [];
+  const context = useWeb3React<Web3Provider>();
 
-  componentDidMount() {
-    const self = this;
-    ((window as any).ethereum as any).on(
-      "accountsChanged",
-      function (accounts: string[]) {
-        self.setAccount(accounts[0]);
-      }
-    );
+  // CONFIG 
+  // useEffect(() => {
+  //   if(context.chainId && context.library.provider && context.libr)
+  //   const config = configService.getConfig();
+  //   dispatch({ con });
+  // }, []);
 
-    if (!this.state.account && this.props.drizzleContext) {
-      this.setAccount(this.props.drizzleContext.drizzleState.accounts[0]);
-    }
-  }
-
-  componentDidUpdate() {
-    console.log("UPDATED");
-  }
-
-  updateData = () => {
-    //this.loadLatestTweets();
-  };
-
-  // loadLatestTweets = async () => {
-  //   // Get drizzle state
-  //   const { drizzleState } = this.props.drizzleContext;
-
-  //   const contract = drizzleState.contracts["Humanitweet"];
-
-  //   // Get the number of minted tokens
-  //   const counter = await contract.methods.tokenCounter().call();
-  //   const tweetNFTs: IHumanitweetNft[] = [];
-
-  //   // Loop from the last to the first
-  //   for (let tokenId = counter - 1; tokenId >= 0; tokenId--) {
-  //     // Get NFT data from the contract and add it to the collection of tweets
-  //     const humanitweetNft = await contract.methods
-  //       .getHumanitweet(tokenId)
-  //       .call();
-
-  //     // Add the NFT to the list of nfts
-  //     tweetNFTs.push({
-  //       tokenId: tokenId,
-  //       tokenURI: humanitweetNft.tokenURI,
-  //       creationDate: new Date(parseInt(humanitweetNft.date, 10) * 1000),
-  //     });
-  //   }
-
-  //   this.setState({ tweets: tweetNFTs });
-  // };
-
-  onNewTweetSent = (stackId: number) => {
-    this._pendingTransactionStacks.push(stackId);
+  const onNewTweetSent = (stackId: number) => {
+    _pendingTransactionStacks.push(stackId);
     //this.processPendingTxs();
   };
 
-  render() {
-    const { drizzle, drizzleState, initialized } = this.props.drizzleContext;
-    console.log(this.props.drizzleContext);
-    return (
-      <Container className="p-3">
-        <h1>Humanitweet</h1>
-        <TweetEditor
-          onNewTweetSent={this.onNewTweetSent}
-          appState={this.state}
-          drizzle={drizzle}
-          drizzleState={drizzleState}
-        />
-        <hr />
-        <TweetList
-          appState={this.state}
-          drizzle={drizzle}
-          drizzleState={drizzleState}
-        />
-        <DummyPOHController
-          appState={this.state}
-          drizzle={drizzle}
-          drizzleState={drizzleState}
-        />
-      </Container>
-    );
-  }
-}
-
-export default class DrizzleApp extends React.Component<any, any> {
-  render() {
-    return (
-      <DrizzleContext.Provider drizzle={drizzle}>
-        <DrizzleContext.Consumer>
-          {(drizzleContext: any) => {
-            const { drizzleState, initialized } = drizzleContext;
-            if (!initialized || drizzleState.accounts.length === 0) {
-              return "Loading...";
-            }
-
-            return <App drizzleContext={drizzleContext} />;
-          }}
-        </DrizzleContext.Consumer>
-      </DrizzleContext.Provider>
-    );
-  }
+  console.log("HUMAN", human);
+  return (
+    <Container className="p-3">
+      <Row>
+        <Col>
+          <h1>Humanitweet</h1>
+        </Col>
+        <Col className="d-flex justify-content-end align-items-center">
+          <Button className="" onClick={() => setIsConnectDialogVisible(true)}>
+            {context.active
+              ? context.account?.substring(0, 4) +
+                "..." +
+                context.account?.substring(context.account.length - 4)
+              : "Connect"}
+          </Button>
+        </Col>
+      </Row>
+      <TweetEditor onNewTweetSent={onNewTweetSent} human={human} />
+      <hr />
+      <TweetList human={human} />
+      <DummyPOHController human={human} />
+      <ConnectWalletDialog
+        show={isConnectDialogVisible}
+        onHide={() => setIsConnectDialogVisible(false)}
+      />
+    </Container>
+  );
 }

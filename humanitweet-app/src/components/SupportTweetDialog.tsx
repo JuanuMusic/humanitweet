@@ -11,6 +11,7 @@ import {
 import { Gem } from "react-bootstrap-icons";
 import HumanitweetService from "../services/HumanitweetOnChainService";
 import UBIService from "../services/UBIService";
+import getWeb3 from "@drizzle-utils/get-web3";
 
 interface ISupportTweetDialogProps extends IBaseHumanitweetProps {
   show: boolean;
@@ -27,6 +28,7 @@ class SupportTweetDialog extends React.Component<
   ISupportTweetDialogState
 > {
   _currentUBIBalance: BN = new BN(0);
+  _web3: any = null;
   constructor(props: ISupportTweetDialogProps) {
     super(props);
     this.state = {
@@ -39,8 +41,9 @@ class SupportTweetDialog extends React.Component<
   }
 
   async initialize() {
-    const balance = await UBIService.balanceOf(this.props.appState.account, this.props.drizzle)
-    this._currentUBIBalance = new BN(balance);
+    
+    //const balance = await UBIService.balanceOf(this.props.human.address, this.props.drizzle)
+    //this._currentUBIBalance = new BN(balance);
   }
 
   handleClose = () => {
@@ -48,8 +51,9 @@ class SupportTweetDialog extends React.Component<
   };
 
   handleValueChanged = (e: any) => {
-    let parsedAmount: number = parseInt(e.target.value, 10);
-    if (Number.isInteger(parsedAmount)) {
+    
+    let parsedAmount: number = parseFloat(e.target.value);
+    if (Number.isSafeInteger(parsedAmount)) {
       this.setState({ amount: e.target.value });
     } else if (e.target.value === undefined || e.target.value === "") {
       this.setState({ amount: "" });
@@ -58,15 +62,14 @@ class SupportTweetDialog extends React.Component<
 
   handleBurnUBIs = async () => {
     if (this.state.amount) {
-      console.log((window as any).web3 as any);
-      const parsedAmount = new BN(this.state.amount);
+      const parsedAmount = new BN(this._web3.utils.toWei(this.state.amount, "ether"));
 
       if (parsedAmount.gt(new BN(0)) && parsedAmount.lte(this._currentUBIBalance)) {
         await HumanitweetService.giveSupport(
           this.props.tweetTokenId,
           parsedAmount,
-          this.props.appState.account,
-          this.props.drizzle
+          this.props.human.address,
+          {} // TODO:: REPLACE WITH PROVIDER
         );
       }
     }

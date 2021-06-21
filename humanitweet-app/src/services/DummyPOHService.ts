@@ -1,8 +1,12 @@
- export default {
-    async registerHuman(address: string, drizzle: any) {
-        const dummyPoh = drizzle.contracts["DummyProofOfHumanity"];
-        await dummyPoh.methods
-            .register(address)
-            .send({ from: address });
-    }
- }
+import { Contract, ethers } from "ethers";
+import configService from "./configService";
+import contractProvider from "./ContractProvider";
+//const { providers, Contract } = require('ethers');
+const POH = require('../contracts/DummyProofOfHumanity.json');
+
+export default {
+  async registerHuman(address: string, provider: any) {
+    const dummyPoh = await contractProvider.getPOHContractForWrite(address, provider);
+    return await dummyPoh.register(address);
+  }
+}

@@ -6,11 +6,21 @@ import reportWebVitals from "./reportWebVitals";
 
 // Importing the Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
-import DrizzleApp from "./App";
+import App from "./App";
+import { Web3ReactProvider } from "@web3-react/core";
+import { Web3Provider } from '@ethersproject/providers'
+
+function getLibrary(provider: any): Web3Provider {
+  const library = new Web3Provider(provider)
+  library.pollingInterval = 12000
+  return library
+}
 
 ReactDOM.render(
     <React.StrictMode>
-      <DrizzleApp />
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <App />
+      </Web3ReactProvider>
     </React.StrictMode>,
   document.getElementById("root")
 );
