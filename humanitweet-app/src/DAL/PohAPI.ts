@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const pohApiInstance = axios.create({
-    baseURL: 'https://api.poh.dev/',
+    baseURL: 'https://api-kovan.poh.dev/',
     timeout: 1000,
     //headers: {'X-Custom-Header': 'foobar'}
 });

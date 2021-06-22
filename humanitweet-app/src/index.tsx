@@ -19,7 +19,9 @@ function getLibrary(provider: any): Web3Provider {
 ReactDOM.render(
     <React.StrictMode>
       <Web3ReactProvider getLibrary={getLibrary}>
+        <div className="text-light">
         <App />
+        </div>
       </Web3ReactProvider>
     </React.StrictMode>,
   document.getElementById("root")

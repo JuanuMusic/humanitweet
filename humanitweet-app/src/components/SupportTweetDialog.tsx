@@ -9,9 +9,10 @@ import {
   Button,
 } from "react-bootstrap";
 import { Gem } from "react-bootstrap-icons";
-import HumanitweetService from "../services/HumanitweetOnChainService";
+import HumanitweetService from "../services/HumanitweetService";
 import UBIService from "../services/UBIService";
-import getWeb3 from "@drizzle-utils/get-web3";
+import { Web3Provider } from '@ethersproject/providers'
+
 
 interface ISupportTweetDialogProps extends IBaseHumanitweetProps {
   show: boolean;
@@ -69,7 +70,7 @@ class SupportTweetDialog extends React.Component<
           this.props.tweetTokenId,
           parsedAmount,
           this.props.human.address,
-          {} // TODO:: REPLACE WITH PROVIDER
+        new Web3Provider({}) // TODO:: REPLACE WITH PROVIDER
         );
       }
     }
@@ -84,6 +85,7 @@ class SupportTweetDialog extends React.Component<
   }
 
   render() {
+    console.log("VALUE",this.state.amount);
     return (
       <Modal show={this.props.show} onHide={this.handleClose} centered>
         <Modal.Header>
@@ -99,7 +101,7 @@ class SupportTweetDialog extends React.Component<
             <FormControl
               id="ubiToBurn"
               placeholder="Amount of UBIs to burn"
-              value={this.state.amount}
+              value={this.state.amount?.toString()}
               onChange={this.handleValueChanged}
             />
           </InputGroup>

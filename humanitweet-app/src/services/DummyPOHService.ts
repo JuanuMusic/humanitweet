@@ -6,7 +6,7 @@ const POH = require('../contracts/DummyProofOfHumanity.json');
 
 export default {
   async registerHuman(address: string, provider: any) {
-    const dummyPoh = await contractProvider.getPOHContractForWrite(address, provider);
+    const dummyPoh = await contractProvider.getDummyPOHContractForWrite(address, provider);
     return await dummyPoh.register(address);
   }
 }

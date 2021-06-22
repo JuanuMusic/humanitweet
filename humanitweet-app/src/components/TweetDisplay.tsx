@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import moment from "moment";
 import { Gem } from "react-bootstrap-icons";
-import HumanitweetService from "../services/HumanitweetOnChainService";
+import HumanitweetService from "../services/HumanitweetService";
 
 interface ITweetDisplayProps extends IBaseHumanitweetProps {
   humanitweetNft: IHumanitweetNft;
@@ -86,15 +86,12 @@ export default class TweetDisplay extends React.Component<
 
   async loadHumanitweet() {
     try {
-      const tweetFile = await fetch(this.props.humanitweetNft.tokenURI);
+      const tweetFile = await fetch(`http://127.0.0.1:8080/ipfs/${this.props.humanitweetNft.tokenURI.replace("ipfs://","")}`);
       const data: ITweetData = await tweetFile.json();
 
-      const userRegistration = await PohAPI.profiles.getByAddress(data.author);
-
-      if (!userRegistration) return;
-
+      const userRegistration = (await PohAPI.profiles.getByAddress(data.author)) || {} as POHProfileModel;
       this.setState({
-        authorDisplayName: userRegistration.display_name,
+        authorDisplayName: userRegistration.display_name || "unknown",
         authorFullName: `${userRegistration.first_name} ${userRegistration.last_name}`,
         authorImage: userRegistration.photo,
         text: data.text,
@@ -136,7 +133,7 @@ export default class TweetDisplay extends React.Component<
           <Container>
             <Row>
               <blockquote className="blockquote mb-0">
-                <p> {this.state.text} </p>
+                <p className="text-dark"> {this.state.text} </p>
                 <footer className="blockquote-footer">
                   {this.state.authorFullName} <br />
                   <span className="fw-light">{this.state.date}</span>
@@ -154,7 +151,7 @@ export default class TweetDisplay extends React.Component<
                   }
                 >
                   <Button onClick={this.handleBurnUBIsClicked}>
-                    <Gem /> <span>{this.props.humanitweetNft.supportGiven}</span>
+                    <Gem /> <span>{this.props.humanitweetNft.supportGiven.toString()}</span>
                   </Button>
                 </OverlayTrigger>
               </Col>

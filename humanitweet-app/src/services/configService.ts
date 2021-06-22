@@ -4,7 +4,8 @@ export interface IConfiguration {
         network: string,
         HumanitweetAddress: string,
         POHAddress: string,
-        UBIAddress: string
+        UBIAddress: string,
+        pohApiBaseUrl: string,
 }
 
 const NETWORK_CONFIGS: {[key: number]: IConfiguration} = {

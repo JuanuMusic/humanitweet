@@ -6,7 +6,7 @@ import FormGroup from "react-bootstrap/FormGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import IPFSStorageService from "../services/IPFSStorageService";
-import HumanitweetService from "../services/HumanitweetOnChainService";
+import HumanitweetService from "../services/HumanitweetService";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from '@ethersproject/providers'
 interface ITweetEditorState {
@@ -58,7 +58,7 @@ export default function TweetEditor(props: ITweetEditorProps) {
     // console.log("CONTEXT", context);
     // const provider = await context.connector?.getProvider();
     // console.log("PROVIDER", provider);
-    await HumanitweetService.publishTweet(tweetData, await context.library?.provider);
+    await HumanitweetService.publishTweet(tweetData, new Web3Provider(await context.library?.provider!));
 
     setTweetText("");
     setIsLoading(false);

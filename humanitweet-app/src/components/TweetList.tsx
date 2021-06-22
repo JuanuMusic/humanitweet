@@ -1,6 +1,11 @@
-import React from "react";
+import { useWeb3React } from "@web3-react/core";
+import { Web3Provider } from '@ethersproject/providers' 
+import React, { useEffect, useState } from "react";
+import HumanitweetService from "../services/HumanitweetService";
 import SupportTweetDialog from "./SupportTweetDialog";
 import TweetDisplay from "./TweetDisplay";
+import contractProvider from "../services/ContractProvider";
+import { printIntrospectionSchema } from "graphql";
 
 interface ITweetListProps extends IBaseHumanitweetProps {}
 
@@ -11,7 +16,65 @@ interface ITweetListState {
   supportTweetTokenId: number;
 }
 
-export default class TweetList extends React.Component<
+export default function TweetList(props: ITweetListProps) {
+  const [supportTweetDialogOpts, setsupportTweetDialogOpts] = useState({show: false, tweetTokenId: -1});
+  const [tweets, setTweets] = useState([] as IHumanitweetNft[]);
+  const context = useWeb3React<Web3Provider>()
+  
+  useEffect(() => {
+    async function getLatestTweets(){
+      try
+      {
+        const tweetList = await HumanitweetService.getLatestTweets(10, contractProvider.getEthersProviderFromWeb3Provider(context.library?.provider!));
+        setTweets(tweetList);
+      }
+      catch(error) {
+        console.error(error.message);
+        console.error(error.stack)
+      }
+
+    }
+
+    if(context.library) getLatestTweets();
+  },[context.library]);
+
+  const handleBurnUBIsClicked = async (tokenId: number) => {
+    setsupportTweetDialogOpts({
+      show: true,
+      tweetTokenId: tokenId,
+    });
+  };
+
+  console.log("PROPS", props);
+
+  return ( 
+    <>
+      <SupportTweetDialog
+        show={supportTweetDialogOpts.show}
+        tweetTokenId={supportTweetDialogOpts.tweetTokenId}
+        onClose={() =>
+          setsupportTweetDialogOpts({
+            show: false,
+            tweetTokenId: -1,
+          })
+        }
+        human={props.human}
+      />
+      {tweets.map((humanitweetNft, index) => (
+        <div key={index}>
+          <TweetDisplay
+            onBurnUBIsClicked={() => handleBurnUBIsClicked(humanitweetNft.tokenId)}
+            humanitweetNft={humanitweetNft}
+            {...props}
+          />
+          <hr />
+        </div>
+      ))}
+    </>
+  );
+}
+
+class TweetListClass extends React.Component<
   ITweetListProps,
   ITweetListState
 > {
@@ -42,31 +105,7 @@ export default class TweetList extends React.Component<
 
   refreshTweets = async () => {
     this.setState({ isLoading: true });
-    // const contract = this.props.drizzle.contracts["Humanitweet"];
-
-    // // Get the number of minted tokens
-    // const counter = await contract.methods.tokenCounter().call();
-    // console.log("TOTAL TOKENS", counter);
-    // const tweetNFTs: IHumanitweetNft[] = [];
-
-    // // Loop from the last
-    // for (let tokenId = counter - 1; tokenId >= 0; tokenId--) {
-    //   // Get NFT data from the contract and add it to the collection of tweets
-    //   const humanitweetNft = await contract.methods
-    //     .getHumanitweet(tokenId)
-    //     .call();
-
-    //     console.log(humanitweetNft);
-
-    //   // Add the NFT to the list of nfts
-    //   tweetNFTs.push({
-    //     tokenId: tokenId,
-    //     tokenURI: humanitweetNft.tokenURI,
-    //     creationDate: new Date(parseInt(humanitweetNft.date, 10) * 1000),
-    //     supportGiven: humanitweetNft.supportGiven,
-    //     supportCount: humanitweetNft.supportCount
-    //   });
-    //}
+    //HumanitweetService.getLatestTweets(10, nl)
 
     //this.setState({ tweets: tweetNFTs, isLoading: false });
   };
@@ -82,32 +121,6 @@ export default class TweetList extends React.Component<
     if (this.state.isLoading) {
       return "Loading...";
     }
-    return (
-      <>
-        <SupportTweetDialog
-          show={this.state.supportTweetDialogVisible}
-          tweetTokenId={this.state.supportTweetTokenId}
-          onClose={() =>
-            this.setState({
-              supportTweetDialogVisible: false,
-              supportTweetTokenId: -1,
-            })
-          }
-          {...this.props}
-        />
-        {this.state.tweets.map((humanitweetNft, index) => (
-          <div key={index}>
-            {/* <TweetDisplay
-              onBurnUBIsClicked={() => this.handleBurnUBIsClicked(humanitweetNft.tokenId)}
-              appState={this.props.appState}
-              drizzle={this.props.drizzle}
-              drizzleState={this.props.drizzleState}
-              humanitweetNft={humanitweetNft}
-            /> */}
-            <hr />
-          </div>
-        ))}
-      </>
-    );
+    
   }
 }
