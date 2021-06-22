@@ -19,6 +19,8 @@ import { Button, Col, Row } from "react-bootstrap";
 import ConnectWalletDialog from "./components/ConnectWalletDialog";
 import { convertToObject } from "typescript";
 import configService, { IConfiguration } from "./services/configService";
+import UBIService from "./services/UBIService";
+import { ethers } from "ethers";
 
 //const drizzle = new Drizzle(drizzleOptions as IDrizzleOptions);
 
@@ -54,6 +56,10 @@ export default function App(props: IAppProps) {
     //this.processPendingTxs();
   };
 
+  const handleStartAccruing = async () => {
+    await UBIService.startAccruing(human.address, new ethers.providers.Web3Provider(context.library?.provider!));
+  }
+
   console.log("HUMAN", human);
   return (
     <>
@@ -88,6 +94,9 @@ export default function App(props: IAppProps) {
           <Col>
             <TweetList human={human} />
           </Col>
+        </Row>
+        <Row>
+          <Col><Button onClick={handleStartAccruing}>Start Accruing</Button></Col>
         </Row>
         {/* <DummyPOHController human={human} /> */}
       </Container>

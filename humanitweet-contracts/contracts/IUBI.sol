@@ -5,4 +5,6 @@ interface IUBI is IERC20 {
     function mint(address dest, uint256 amount) external virtual;
 
     function burn(address from, uint256 amount) external virtual;
+
+    function startAccruing(address _human) external virtual;
 }

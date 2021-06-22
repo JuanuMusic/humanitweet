@@ -3,6 +3,7 @@ import configService from "./configService";
 
 const DummyPOHContract = require('../contracts/DummyProofOfHumanity.json');
 const HumanitweetContract = require('../contracts/Humanitweet.json');
+const UBIContract = require('../contracts/IUBI.json');
 
 export type EthersProviders = ethers.providers.ExternalProvider | ethers.providers.JsonRpcFetchFunc;
 
@@ -64,7 +65,20 @@ const contractProvider = {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForRead(config.HumanitweetAddress, HumanitweetContract.abi, provider);
-    }
+    },
+
+    async getUBIContractForRead(provider: ethers.providers.Web3Provider) : Promise<Contract> {
+        const network = await provider.getNetwork();
+        const config = configService.getConfig(network.chainId);
+        return await this.getContractForRead(config.UBIAddress, UBIContract.abi, provider);
+    },
+
+    async getUBIContractForWrite(address: string, provider: ethers.providers.Web3Provider) : Promise<Contract> {
+        const network = await provider.getNetwork();
+        const config = configService.getConfig(network.chainId);
+        return await this.getContractForWrite(config.UBIAddress, UBIContract.abi, address, provider);
+    },
+
 }
 
 export default contractProvider;

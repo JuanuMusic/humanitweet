@@ -1,5 +1,4 @@
-import { providers, Contract, ethers } from "ethers";
-import BN from "bn.js";
+import { providers, Contract, ethers, BigNumber } from "ethers";
 import IPFSStorageService from "./IPFSStorageService";
 //const { providers, Contract } = require('ethers');
 import configService from "./configService";
@@ -10,7 +9,7 @@ const Humanitweet = require('../contracts/Humanitweet.json');
 // const registryWrapper = new Contract(Registry.address, registryAbi.abi, signer);
 
 interface IHumanitweetService {
-  giveSupport(tokenID: number, amount: BN, from: string, provider: ethers.providers.Web3Provider): Promise<void>;
+  giveSupport(tokenID: number, amount: BigNumber, from: string, provider: ethers.providers.Web3Provider): Promise<void>;
   publishTweet(tweetData: ITweetData, provider: ethers.providers.Web3Provider): Promise<void>;
   getLatestTweets(maxRecords: number, provider: ethers.providers.Web3Provider): Promise<IHumanitweetNft[]>;
 }
@@ -25,7 +24,7 @@ const HumanitweetService: IHumanitweetService = {
    * @param from Human burning their UBIs.
    * @param provider Web3Provider
    */
-  async giveSupport(tokenID: number, amount: BN, from: string, provider: ethers.providers.Web3Provider) {
+  async giveSupport(tokenID: number, amount: BigNumber, from: string, provider: ethers.providers.Web3Provider) {
 
     console.log("TokenID", tokenID);
     console.log("Amount", amount);
