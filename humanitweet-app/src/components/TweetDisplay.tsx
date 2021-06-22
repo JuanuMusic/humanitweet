@@ -127,13 +127,13 @@ export default class TweetDisplay extends React.Component<
 
   render() {
     return (
-      <Card style={{ width: "100%" }}>
+      <Card style={{ width: "100%", maxWidth: "700px" }} className="mx-auto">
         {/* <Card.Img variant="bottom" src={this.state.authorImage} /> */}
         <Card.Body>
           <Container>
             <Row>
               <blockquote className="blockquote mb-0">
-                <p className="text-dark"> {this.state.text} </p>
+                <p className="humanitweet-text text-dark"> {this.state.text} </p>
                 <footer className="blockquote-footer">
                   {this.state.authorFullName} <br />
                   <span className="fw-light">{this.state.date}</span>

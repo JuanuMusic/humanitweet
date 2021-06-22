@@ -42,7 +42,7 @@ export default function App(props: IAppProps) {
   const _pendingTransactionStacks: number[] = [];
   const context = useWeb3React<Web3Provider>();
 
-  // CONFIG 
+  // CONFIG
   // useEffect(() => {
   //   if(context.chainId && context.library.provider && context.libr)
   //   const config = configService.getConfig();
@@ -56,29 +56,41 @@ export default function App(props: IAppProps) {
 
   console.log("HUMAN", human);
   return (
-    <Container className="p-3">
-      <Row>
-        <Col>
-          <h1>Humanitweet</h1>
-        </Col>
-        <Col className="d-flex justify-content-end align-items-center">
-          <Button className="" onClick={() => setIsConnectDialogVisible(true)}>
-            {context.active
-              ? context.account?.substring(0, 4) +
-                "..." +
-                context.account?.substring(context.account.length - 4)
-              : "Connect"}
-          </Button>
-        </Col>
-      </Row>
-      <TweetEditor onNewTweetSent={onNewTweetSent} human={human} />
-      <hr />
-      <TweetList human={human} />
-      <DummyPOHController human={human} />
+    <>
       <ConnectWalletDialog
         show={isConnectDialogVisible}
         onHide={() => setIsConnectDialogVisible(false)}
       />
-    </Container>
+      <Container className="p-3" style={{maxWidth: "750px"}}>
+        <Row>
+          <Col>
+            <h1>Humanitweet</h1>
+          </Col>
+          <Col className="d-flex justify-content-end align-items-center">
+            <Button
+              className=""
+              onClick={() => setIsConnectDialogVisible(true)}
+            >
+              {context.active
+                ? context.account?.substring(0, 4) +
+                  "..." +
+                  context.account?.substring(context.account.length - 4)
+                : "Connect"}
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <TweetEditor onNewTweetSent={onNewTweetSent} human={human} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <TweetList human={human} />
+          </Col>
+        </Row>
+        {/* <DummyPOHController human={human} /> */}
+      </Container>
+    </>
   );
 }

@@ -81,7 +81,7 @@ const HumanitweetService: IHumanitweetService = {
       console.log("NFT", humanitweetNft);
 
       // Add the NFT to the list of nfts
-      tweetNFTs.push({
+      tweetNFTs.unshift({
         tokenId: tokenId,
         tokenURI: humanitweetNft.tokenURI,
         creationDate: new Date(parseInt(humanitweetNft.date, 10) * 1000),

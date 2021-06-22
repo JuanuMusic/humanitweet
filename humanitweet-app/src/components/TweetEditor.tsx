@@ -82,7 +82,7 @@ export default function TweetEditor(props: ITweetEditorProps) {
       </Row>
       <Row>
         <Col xs={12} className="d-flex justify-content-end">
-          <Button disabled={!isSendButtonEnabled} onClick={handleSendTweet}>
+          <Button disabled={!isSendButtonEnabled} onClick={handleSendTweet} className="mb-5">
             Tweet
           </Button>
         </Col>
