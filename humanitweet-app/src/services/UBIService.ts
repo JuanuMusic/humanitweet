@@ -4,7 +4,6 @@ import IPFSStorageService from "./IPFSStorageService";
 import configService from "./configService";
 import contractProvider, { EthersProviders } from "./ContractProvider";
 import { Web3Provider } from "@ethersproject/providers";
-const UBIContact = require('../contracts/IUBI.json');
 
 export default {
   /**
@@ -21,6 +20,7 @@ export default {
 
     async startAccruing(address: string, provider: Web3Provider) {
       const contract = await contractProvider.getUBIContractForWrite(address, provider);
+      console.log("UBI CONTRACT", contract);
       const tx = await contract.startAccruing(address);
     }
 }
