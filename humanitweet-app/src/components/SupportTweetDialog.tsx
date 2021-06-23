@@ -79,17 +79,13 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
 
   const handleAmountChanged = (e: any) => {
     let parsedAmount: number = parseFloat(e.target.value);
-    if (Number.isSafeInteger(parsedAmount)) {
-      setAmount(e.target.value);
-    } else if (e.target.value === undefined || e.target.value === "") {
-      setAmount("");
-    }
+    setAmount(e.target.value);
   };
 
   const _isConfirmButtonEnabled = () => {
     if (!amount) return false;
     console.log("AMOUNT", amount);
-    let parsedAmount = BigNumber.from(amount);
+    let parsedAmount = ethers.utils.parseEther(amount);
     return (
       parsedAmount.gt(BigNumber.from(0)) && parsedAmount.lte(currentUBIBalance)
     );
@@ -101,7 +97,7 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
         <Modal.Title>Support tweet {props.tweetTokenId}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        UBI Balance: {currentUBIBalance.toString()}
+        UBI Balance: {ethers.utils.formatEther(currentUBIBalance.toString())}
         <InputGroup className="mb-2 mr-sm-2">
           <InputGroup.Prepend>
             <InputGroup.Text>
@@ -109,6 +105,9 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
             </InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
+            type="number"
+            step="0.1"
+            min="0"
             id="ubiToBurn"
             placeholder="Amount of UBIs to burn"
             value={amount?.toString()}

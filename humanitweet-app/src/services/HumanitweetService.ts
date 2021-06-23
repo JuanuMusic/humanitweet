@@ -26,13 +26,11 @@ const HumanitweetService: IHumanitweetService = {
    */
   async giveSupport(tokenID: number, amount: BigNumber, from: string, provider: ethers.providers.Web3Provider) {
 
-    console.log("TokenID", tokenID);
-    console.log("Amount", amount);
     // Create as NFT on the humanitweet contract
-
     const contract = await contractProvider.getHumanitweetContractForWrite(from, provider);
     const tx = await contract.support(tokenID, amount);
     console.log("SUPPORT TX", tx);
+    
   },
 
   /**
