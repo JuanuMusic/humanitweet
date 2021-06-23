@@ -41,9 +41,16 @@ contract Humanitweet is ERC721, Ownable {
     uint256 public tokenCounter;
     
 
+    /// Require that an address is a valid registered human.
     modifier isHuman(address _submission) {
         IProofOfHumanity.SubmissionInfo memory info = _poh.getSubmissionInfo(_submission);
         require(info.registered, HUMAN_NOT_REGISTERED);
+        _;
+    }
+
+    /// Require that a token has been minted
+    modifier tokenExists(uint256 tokenId) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         _;
     }
 
@@ -87,13 +94,11 @@ contract Humanitweet is ERC721, Ownable {
         return _baseURIextended;
     }
 
-    function _setHumanitweet(uint256 tokenId, HumanitweetData memory data) internal virtual {
-     require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
+    function _setHumanitweet(uint256 tokenId, HumanitweetData memory data) internal virtual tokenExists(tokenId) {
      _humanitweets[tokenId] = data;
     }
     
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    function tokenURI(uint256 tokenId) public view virtual override tokenExists(tokenId) returns (string memory) {
 
         HumanitweetData memory humanitweet = _humanitweets[tokenId];
         string memory base = _baseURI();
@@ -110,8 +115,7 @@ contract Humanitweet is ERC721, Ownable {
         return string(abi.encodePacked(base, tokenId.toString()));
     }
 
-    function getHumanitweet(uint256 tokenId) public view virtual returns (HumanitweetData memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+    function getHumanitweet(uint256 tokenId) public view virtual tokenExists(tokenId) returns (HumanitweetData memory) {
         return _humanitweets[tokenId];
     }
 
@@ -120,7 +124,8 @@ contract Humanitweet is ERC721, Ownable {
      * Supporters count is only added once per human.
      * If a Human gives support multiple times it will only count as one supporter.
      */
-    function support(uint256 tokenId, uint256 ubiAmount) public {
+    function support(uint256 tokenId, uint256 ubiAmount) public tokenExists(tokenId) {
+        
         
         // Add the amount of support given
         _humanitweets[tokenId].supportGiven += ubiAmount;
