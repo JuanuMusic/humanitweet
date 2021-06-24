@@ -15,6 +15,14 @@ The Humanitweet is an ERC721. Everytime an address tries to create a new Humanit
 
 If the address is an actual Human, a new NFT with symbol "HTWT" is minted and sent to the Human that created it, and a JSON file is generated with the tweet and the author, and uploaded to a decentralized storage system.
 
+### Likes / Support (Or how to come up with excuses to burn UBI)
+Just as on any social network there is the concept of like, Humanitweet has a "support tweet" feature, which is paid in UBIs.
+This feature does 4 things:
+- Burns 50% of the UBIs payed 🔥
+- Gives the remaining to the tweet creator (to increase interest on creating quality content)
+- Adds the total balance paid to the total value of support given to the tweet (which is irevokable. Support can only be given, not taken away)
+- The NFTs keeps track of the number of unique humans that gave support.  This way, no matter the amount of support received, the number of people also counts.
+
 ### Storage system
 The storage system is still to be defined. A potential candidate for this could be [ARweave](https://www.arweave.org/) since it has the potential to store data for a long time (200 years) as opposed to [FileCoin](https://filecoin.io/) which requires monthly payments. **Other solutions suggestions are welcomed !🙌**
 
