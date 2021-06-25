@@ -9,7 +9,7 @@ export type EthersProviders = ethers.providers.ExternalProvider | ethers.provide
 
 
 const contractProvider = {
-    
+
     /**
      * Returns an instance of the ethers provider from a wallet provider
      * @param provider The wallet provider
@@ -25,7 +25,7 @@ const contractProvider = {
      * @param ethersProvider Web3Provider
      * @returns 
      */
-    async getContractForRead(contractAddress: string, abi: any, ethersProvider: ethers.providers.Web3Provider) : Promise<Contract>  {
+    async getContractForRead(contractAddress: string, abi: any, ethersProvider: ethers.providers.Web3Provider): Promise<Contract> {
         const contract = new Contract(contractAddress, abi, ethersProvider);
         return contract.connect(ethersProvider)
     },
@@ -38,19 +38,19 @@ const contractProvider = {
      * @param ethersProvider 
      * @returns 
      */
-    async getContractForWrite(contractAddress: string, abi: any, fromAddress: string, ethersProvider: ethers.providers.Web3Provider) : Promise<Contract>  {
+    async getContractForWrite(contractAddress: string, abi: any, fromAddress: string, ethersProvider: ethers.providers.Web3Provider): Promise<Contract> {
         const signer = ethersProvider.getSigner(fromAddress);
         const contract = new Contract(contractAddress, abi, signer);
         return contract.connect(signer);
     },
 
-    async getDummyPOHContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider) : Promise<Contract>  {
+    async getDummyPOHContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForWrite(config.POHAddress, DummyPOHContract.abi, fromAddress, provider);
     },
 
-    async getHumanitweetContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider) : Promise<Contract>  {
+    async getHumanitweetContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForWrite(config.HumanitweetAddress, HumanitweetContract.abi, fromAddress, provider);
@@ -61,23 +61,29 @@ const contractProvider = {
      * @param provider Web3Provider
      * @returns 
      */
-    async getHumanitweetContractForRead(provider: ethers.providers.Web3Provider) : Promise<Contract> {
+    async getHumanitweetContractForRead(provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForRead(config.HumanitweetAddress, HumanitweetContract.abi, provider);
     },
 
-    async getUBIContractForRead(provider: ethers.providers.Web3Provider) : Promise<Contract> {
+    async getUBIContractForRead(provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForRead(config.UBIAddress, UBIContract.abi, provider);
     },
 
-    async getUBIContractForWrite(address: string, provider: ethers.providers.Web3Provider) : Promise<Contract> {
+    async getUBIContractForWrite(address: string, provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
         return await this.getContractForWrite(config.UBIAddress, UBIContract.abi, address, provider);
     },
+
+    async getHumanitweetContractAddress(provider: ethers.providers.Web3Provider) {
+        const network = await provider.getNetwork();
+        const config = configService.getConfig(network.chainId);
+        return config.HumanitweetAddress;
+    }
 
 }
 

@@ -41,7 +41,6 @@ export default function App(props: IAppProps) {
 
   const [isConnectDialogVisible, setIsConnectDialogVisible] = useState(false);
   const human = useHuman();
-  const _pendingTransactionStacks: number[] = [];
   const context = useWeb3React<Web3Provider>();
 
   // CONFIG
@@ -52,7 +51,7 @@ export default function App(props: IAppProps) {
   // }, []);
 
   const onNewTweetSent = (stackId: number) => {
-    _pendingTransactionStacks.push(stackId);
+    //_pendingTransactionStacks.push(stackId);
     //this.processPendingTxs();
   };
 

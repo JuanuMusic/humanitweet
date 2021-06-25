@@ -1,5 +1,5 @@
 const Humanitweet = artifacts.require("Humanitweet");
-const DummyProofOfHumanity = artifacts.require("DummyProofOfHumanity");
+//const DummyProofOfHumanity = artifacts.require("DummyProofOfHumanity");
 const DummyUBI = artifacts.require("DummyUBI");
 
 
@@ -20,8 +20,8 @@ module.exports = async function (deployer) {
     pohAddress = DummyProofOfHumanity.address;
   }
 
-  await deployer.deploy(Humanitweet, pohAddress, ubiAddress);
-  // console.log("...COMPLETED MIGRATION")
+  const deploy = await deployer.deploy(Humanitweet, pohAddress, ubiAddress);
+  console.log("...COMPLETED MIGRATION", deploy)
   // console.log("Dummy POH", DummyProofOfHumanity.address);
   // console.log("Humanitweet", Humanitweet.addess);
 }

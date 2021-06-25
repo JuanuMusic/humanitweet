@@ -13,8 +13,10 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import moment from "moment";
-import { Gem } from "react-bootstrap-icons";
+
+import { FaFire, FaUsers } from "react-icons/fa";
 import HumanitweetService from "../services/HumanitweetService";
+import { ethers } from "ethers";
 
 interface ITweetDisplayProps extends IBaseHumanitweetProps {
   humanitweetNft: IHumanitweetNft;
@@ -23,7 +25,7 @@ interface ITweetDisplayProps extends IBaseHumanitweetProps {
 
 interface ITweetDisplayState {
   tokenID: number;
-  authorImage: string;
+  authorImage: string | undefined;
   authorDisplayName: string;
   authorFullName: string;
   text: string;
@@ -43,6 +45,38 @@ interface IRegistration {
   bio: string;
   photo: string;
   video: string;
+}
+interface IGiveSupportButtonProps {
+  onClick(e: any): void;
+  supportGiven: string;
+  className?: string;
+}
+
+/**
+ * The button used to give support to a tweet.
+ * @param props A
+ * @returns
+ */
+function GiveSupportButton(props: IGiveSupportButtonProps) {
+  return (
+    <OverlayTrigger
+      placement="bottom"
+      overlay={
+        <Tooltip id="immortalize_tooltip">
+          Immortalize this tweet by burning some UBIs!
+        </Tooltip>
+      }
+    >
+      <div className={props.className}>
+        <Button variant="outline-danger" onClick={props.onClick}>
+          <div className="d-flex justify-content-cente align-items-center">
+            <FaFire />
+            <span>{props.supportGiven}</span>
+          </div>
+        </Button>
+      </div>
+    </OverlayTrigger>
+  );
 }
 
 export default class TweetDisplay extends React.Component<
@@ -64,7 +98,7 @@ export default class TweetDisplay extends React.Component<
   }
 
   componentDidMount() {
-    this.loadHumanitweet();
+    HumanitweetService.loadHumanitweetFromNFT(this.props.humanitweetNft);
   }
 
   async getEvidence(uri: string) {
@@ -82,36 +116,6 @@ export default class TweetDisplay extends React.Component<
   async getRegistration(uri: string) {
     const evidence = await this.getEvidence(uri);
     return await this.getFromEvidence<IRegistration>(evidence);
-  }
-
-  async loadHumanitweet() {
-    try {
-      const tweetFile = await fetch(
-        `http://127.0.0.1:8080/ipfs/${this.props.humanitweetNft.tokenURI.replace(
-          "ipfs://",
-          ""
-        )}`
-      );
-      const data: ITweetData = await tweetFile.json();
-
-      const userRegistration =
-        (await PohAPI.profiles.getByAddress(data.author)) ||
-        ({} as POHProfileModel);
-      this.setState({
-        authorDisplayName: userRegistration.display_name || data.author,
-        authorFullName: `${userRegistration.first_name} ${userRegistration.last_name}`,
-        authorImage:
-          userRegistration.photo ||
-          "https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg",
-        text: data.text,
-
-        date:
-          this.props.humanitweetNft.creationDate &&
-          moment(this.props.humanitweetNft.creationDate).format("MMM DD, Y"),
-      });
-    } catch (error) {
-      console.error("ERRRR", error);
-    }
   }
 
   handleBurnUBIsClicked = async () => {
@@ -144,23 +148,37 @@ export default class TweetDisplay extends React.Component<
                 </div>
               </Col>
             </Row>
-            <Row className="align-items-center">
-              <Col>
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip id="immortalize_tooltip">
-                      Immortalize this tweet by burning some UBIs!
-                    </Tooltip>
+            <Row>
+              <Col className="d-flex align-items-start">
+                <GiveSupportButton
+                  className="align-self-center"
+                  onClick={this.handleBurnUBIsClicked}
+                  supportGiven={
+                    this.props.humanitweetNft.supportGiven &&
+                    ethers.utils.formatEther(
+                      this.props.humanitweetNft.supportGiven
+                    )
                   }
-                >
-                  <Button onClick={this.handleBurnUBIsClicked}>
-                    <Gem />{" "}
-                    <span>
-                      {this.props.humanitweetNft.supportGiven.toString()}
-                    </span>
-                  </Button>
-                </OverlayTrigger>
+                />
+
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip id="supporters_hint">
+                        Number of humans that gave support to this humanitweet.
+                      </Tooltip>
+                    }
+                  >
+                    <div className="d-inline-flex text-dark align-self-center justify-content-center px-2 mx-2">
+                      <FaUsers />
+                      <span>
+                        {(this.props.humanitweetNft.supportCount &&
+                          this.props.humanitweetNft.supportCount.toString()) ||
+                          "0"}{" "}
+                        supporters
+                      </span>
+                    </div>
+                  </OverlayTrigger>
               </Col>
             </Row>
           </Container>

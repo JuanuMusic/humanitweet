@@ -43,7 +43,7 @@ contract("Humanitweet", accounts => {
             const tokenId = receipt.logs[0].args.tokenId;
             assert(tokenId.eq(new BN(0)), "NFT was not correctly minted");
 
-            const tokenCounter = await humanitweet.tokenCounter()
+            const tokenCounter = await humanitweet.getTokenCounter()
             assert(tokenCounter.eq(new BN(1)), "Invalid token counter value");
         });
 

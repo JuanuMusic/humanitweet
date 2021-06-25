@@ -1,9 +1,9 @@
 interface IHumanitweetNft {
-    tokenId: number;
+    tokenId: string;
     tokenURI: string;
     creationDate: Date;
-    supportGiven: number;
-    supportCount: number;
+    supportGiven: BigNumber;
+    supportCount: BigNumber;
 }
 
 interface ITweetData {

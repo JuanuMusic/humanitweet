@@ -17,7 +17,7 @@ import contractProvider from "../services/ContractProvider";
 
 interface ISupportTweetDialogProps extends IBaseHumanitweetProps {
   show: boolean;
-  tweetTokenId: number;
+  tweetTokenId: string;
   onClose?(): any;
 }
 
@@ -53,12 +53,38 @@ function useUBIBalance(address: string) {
 function SupportTweetDialog(props: ISupportTweetDialogProps) {
   const [amount, setAmount] = useState("");
   const currentUBIBalance = useUBIBalance(props.human.address);
+  const [isApproved, setIsApproved] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const context = useWeb3React<Web3Provider>();
 
   const handleClose = () => {
     props.onClose && props.onClose();
   };
 
+  const handleApproveBurn = async () => {
+    if (amount) {
+      setIsApproving(true);
+      const parsedAmount = utils.parseEther(amount);
+
+      if (
+        parsedAmount.gt(BigNumber.from("0")) &&
+        parsedAmount.lte(currentUBIBalance)
+      ) {
+        await HumanitweetService.requestBurnApproval(
+          props.human.address,
+          parsedAmount,
+          new ethers.providers.Web3Provider(context.library?.provider!)
+        );
+
+        setIsApproved(true);
+        setIsApproving(false);
+      }
+    }
+  };
+
+  /**
+   * Send  request to burn UBIs. First approves the ammount and then burns it.
+   */
   const handleBurnUBIs = async () => {
     if (amount) {
       const parsedAmount = utils.parseEther(amount);
@@ -78,17 +104,23 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
   };
 
   const handleAmountChanged = (e: any) => {
-    let parsedAmount: number = parseFloat(e.target.value);
     setAmount(e.target.value);
   };
 
-  const _isConfirmButtonEnabled = () => {
+  const _isAmountValid = () => {
     if (!amount) return false;
-    console.log("AMOUNT", amount);
     let parsedAmount = ethers.utils.parseEther(amount);
     return (
       parsedAmount.gt(BigNumber.from(0)) && parsedAmount.lte(currentUBIBalance)
     );
+  };
+
+  const _isConfirmButtonEnabled = () => {
+    return isApproved && _isAmountValid();
+  };
+
+  const _isApproveButtonEnabled = () => {
+    return !isApproved && !isApproving && _isAmountValid();
   };
 
   return (
@@ -116,6 +148,12 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
         </InputGroup>
       </Modal.Body>
       <Modal.Footer>
+        <Button
+          disabled={!_isApproveButtonEnabled()}
+          onClick={handleApproveBurn}
+        >
+          Let us burn it for ya!
+        </Button>
         <Button disabled={!_isConfirmButtonEnabled()} onClick={handleBurnUBIs}>
           Burn baby, burn...
         </Button>

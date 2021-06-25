@@ -3,15 +3,15 @@ pragma solidity 0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IProofOfHumanity.sol";
-import "./IUBI.sol";
+import "./IProofOfhumanity.sol";
 
 contract Humanitweet is ERC721, Ownable {
 
     string HUMAN_NOT_REGISTERED = "HUMAN_NOT_REGISTERED";
     using Strings for uint256;
-    IUBI _ubi;
+    address _ubi;
 
     struct HumanitweetData {
         
@@ -34,16 +34,16 @@ contract Humanitweet is ERC721, Ownable {
     // Mapping for humans that support each tweet
     mapping(uint256 => mapping(address => bool)) _supporters;
 
-    IProofOfHumanity public _poh;
+    address private _poh;
     // Base URI
     string private _baseURIextended;
 
-    uint256 public tokenCounter;
+    uint256 private _tokenCounter;
     
 
     /// Require that an address is a valid registered human.
     modifier isHuman(address _submission) {
-        IProofOfHumanity.SubmissionInfo memory info = _poh.getSubmissionInfo(_submission);
+        IProofOfHumanity.SubmissionInfo memory info = IProofOfHumanity(_poh).getSubmissionInfo(_submission);
         require(info.registered, HUMAN_NOT_REGISTERED);
         _;
     }
@@ -55,15 +55,15 @@ contract Humanitweet is ERC721, Ownable {
     }
 
     constructor(address poh, address ubi) public ERC721("Humanitweet", "HTWT") {
-        tokenCounter = 0;
-        _poh = IProofOfHumanity(poh);
-        _ubi = IUBI(ubi);
+        _tokenCounter = 0;
+        _poh = poh;
+        _ubi = ubi;
     }
 
     function publishHumanitweet(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
         
         // Get the new token iD
-        uint256 newItemId = tokenCounter;
+        uint256 newItemId = _tokenCounter;
 
         // Mint the NFT with the new ID
         _safeMint(_msgSender(), newItemId);
@@ -80,7 +80,7 @@ contract Humanitweet is ERC721, Ownable {
         _setHumanitweet(newItemId, humanitweet);
         
         // Update the token counter
-        tokenCounter = tokenCounter +1;
+        _tokenCounter = _tokenCounter +1;
 
         // Return the new token ID
         return newItemId;
@@ -115,6 +115,10 @@ contract Humanitweet is ERC721, Ownable {
         return string(abi.encodePacked(base, tokenId.toString()));
     }
 
+    function getTokenCounter() public view returns(uint256) {
+        return _tokenCounter;
+    }
+
     function getHumanitweet(uint256 tokenId) public view virtual tokenExists(tokenId) returns (HumanitweetData memory) {
         return _humanitweets[tokenId];
     }
@@ -125,18 +129,23 @@ contract Humanitweet is ERC721, Ownable {
      * If a Human gives support multiple times it will only count as one supporter.
      */
     function support(uint256 tokenId, uint256 ubiAmount) public tokenExists(tokenId) {
+
+        // Burn the UBI on behalf of the caller.
+        ERC20Burnable(_ubi).burnFrom(_msgSender(), ubiAmount);
         
+        // Add support based on ubi amount
+        _addSupport(tokenId, ubiAmount, _msgSender());
         
-        // Add the amount of support given
-        _humanitweets[tokenId].supportGiven += ubiAmount;
+    }
+
+    function _addSupport(uint256 tokenId, uint256 amount, address supporter) private {
+         // Add the amount of support given
+        _humanitweets[tokenId].supportGiven += amount;
 
         // If is first support, add 1 supporter.
-        if(!_supporters[tokenId][_msgSender()]) {
-            _supporters[tokenId][_msgSender()] = true;
+        if(!_supporters[tokenId][supporter]) {
+            _supporters[tokenId][supporter] = true;
             _humanitweets[tokenId].supportersCount += 1;
         }
-
-        // Burn the UBI.
-        _ubi.burn(_msgSender(), ubiAmount);
     }
 }

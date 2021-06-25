@@ -20,7 +20,7 @@ interface ITweetListState {
 export default function TweetList(props: ITweetListProps) {
   const [supportTweetDialogOpts, setsupportTweetDialogOpts] = useState({
     show: false,
-    tweetTokenId: -1,
+    tweetTokenId: "",
   });
   const [tweets, setTweets] = useState([] as IHumanitweetNft[]);
   const context = useWeb3React<Web3Provider>();
@@ -44,7 +44,8 @@ export default function TweetList(props: ITweetListProps) {
     if (context.library) getLatestTweets();
   }, [context.library]);
 
-  const handleBurnUBIsClicked = async (tokenId: number) => {
+  const handleBurnUBIsClicked = async (tokenId: string) => {
+
     setsupportTweetDialogOpts({
       show: true,
       tweetTokenId: tokenId,
@@ -61,11 +62,11 @@ export default function TweetList(props: ITweetListProps) {
         onClose={() =>
           setsupportTweetDialogOpts({
             show: false,
-            tweetTokenId: -1,
+            tweetTokenId: "",
           })
         }
         human={props.human}
-      />
+      />{" "}
       <Container>
         {tweets.map((humanitweetNft, index) => (
           <Row key={index} className="justify-content-center">

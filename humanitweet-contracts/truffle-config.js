@@ -17,7 +17,7 @@ module.exports = {
     kovan: {
       provider: function () {
         return new HDWalletProvider(
-          [process.env.HOMER_1_PK],
+          [process.env.HOMER_2_PK],
           `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`
         )
       },

@@ -14,11 +14,16 @@ contract DummyUBI is ERC20, IUBI  {
         _mint(dest, amount);
     }
 
-    function burn(address from, uint256 amount) public override {
-        _burn(from, amount);
+    function burn(uint256 amount) public override {
+        _burn(_msgSender(), amount);
+    }
+
+    function burnFrom(address _account, uint256 _amount) public override {
+        _burn(_account, _amount);
     }
 
     function startAccruing(address _human) external override {    
         // TODO: implement basic logic of accruing dummy UBIs
     }
+
 }
