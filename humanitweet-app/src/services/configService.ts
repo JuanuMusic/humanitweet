@@ -2,7 +2,7 @@ import kovanConfig from "../config/kovan.json";
 
 export interface IConfiguration {
         network: string,
-        HumanitweetAddress: string,
+        PostaAddress: string,
         POHAddress: string,
         UBIAddress: string,
         pohApiBaseUrl: string,

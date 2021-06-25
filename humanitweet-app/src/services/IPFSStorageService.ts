@@ -2,16 +2,16 @@ import ipfsHttpClient from 'ipfs-http-client';
 import fs from "fs";
 
 /**
- * Interface to implement storage system of tweets.
+ * Interface to implement storage system of Posts.
  */
 interface IStorageService {
     /**
-     * Uploads the tweet json to IPFS and returns a string with the path
-     * @param data Generates a tweet
+     * Uploads the post json to IPFS and returns a string with the path
+     * @param data Generates a post
      * 
      * @returns Path to the uploaded file.
      */
-    uploadTweet(data: ITweetData): Promise<string>;
+    uploadPost(data: IPostData): Promise<string>;
 }
 
 /**
@@ -21,17 +21,17 @@ const IPFSStorageService : IStorageService = {
     
 
     /**
-     * Uploads the tweet json to IPFS and returns a string with the path
-     * @param data Generates a tweet
+     * Uploads the post json to IPFS and returns a string with the path
+     * @param data Generates a post
      * 
      * @returns Path to the uploaded file.
      */
-    async uploadTweet(data: ITweetData): Promise<string> {
+    async uploadPost(data: IPostData): Promise<string> {
 
         const ipfsClient = ipfsHttpClient.create({ url: "/ip4/127.0.0.1/tcp/5001" });
 
-        const tweetBytes = new TextEncoder().encode(JSON.stringify(data));
-        const file = await ipfsClient.add(tweetBytes);
+        const postBytes = new TextEncoder().encode(JSON.stringify(data));
+        const file = await ipfsClient.add(postBytes);
         return file.path;
     }
 }

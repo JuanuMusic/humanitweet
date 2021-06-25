@@ -6,20 +6,17 @@ import FormGroup from "react-bootstrap/FormGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import IPFSStorageService from "../services/IPFSStorageService";
-import HumanitweetService from "../services/HumanitweetService";
+import PostaService from "../services/PostaService";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from '@ethersproject/providers'
-interface ITweetEditorState {
-  text: string;
-}
 
-interface ITweetEditorProps extends IBaseHumanitweetProps {
+interface IPostEditorProps extends IBasePostaProps {
   disabled?: boolean;
-  onNewTweetSent(stackId: number): void;
+  onNewPostSent(stackId: number): void;
 }
 
-export default function TweetEditor(props: ITweetEditorProps) {
-  const [tweetText, setTweetText] = useState("");
+export default function PostEditor(props: IPostEditorProps) {
+  const [postText, setPostText] = useState("");
   const [isEditorEnabled, setIsEditorEnabled] = useState(false);
   const [isSendButtonEnabled, setIsSendButtonEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,27 +37,24 @@ export default function TweetEditor(props: ITweetEditorProps) {
       props.human &&
         props.human.profile &&
         props.human.profile.registered &&
-        typeof tweetText === "string" && 
-        tweetText !== "" &&
+        typeof postText === "string" && 
+        postText !== "" &&
         !isLoading
     );
-  }, [props.human, isLoading, tweetText]);
+  }, [props.human, isLoading, postText]);
 
-  const handleSendTweet = async () => {
-    // Generate the tweet data with the content and the author address
-    const tweetData: ITweetData = {
-      text: tweetText,
+  const handleSendPost = async () => {
+    // Generate the post data with the content and the author address
+    const postData: IPostData = {
+      text: postText,
       author: props.human.address,
     };
 
     setIsLoading(true);
-    // Publish the tyweet through the Humanitweet Service
-    // console.log("CONTEXT", context);
-    // const provider = await context.connector?.getProvider();
-    // console.log("PROVIDER", provider);
-    await HumanitweetService.publishTweet(tweetData, new Web3Provider(await context.library?.provider!));
+    // Publish the tyweet through the Posta Service
+    await PostaService.publishPost(postData, new Web3Provider(await context.library?.provider!));
 
-    setTweetText("");
+    setPostText("");
     setIsLoading(false);
   };
 
@@ -68,13 +62,13 @@ export default function TweetEditor(props: ITweetEditorProps) {
     <Container>
       <Row>
         <Col xs={12}>
-          <FormGroup controlId="formTweetEditor">
+          <FormGroup controlId="formPostEditor">
             <FormControl
               as="textarea"
               placeholder="What's happening?"
               rows={3}
-              value={tweetText}
-              onChange={(e) => setTweetText(e.target.value)}
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
               disabled={!isEditorEnabled}
             ></FormControl>
           </FormGroup>
@@ -82,8 +76,8 @@ export default function TweetEditor(props: ITweetEditorProps) {
       </Row>
       <Row>
         <Col xs={12} className="d-flex justify-content-end">
-          <Button disabled={!isSendButtonEnabled} onClick={handleSendTweet} className="mb-5">
-            Tweet
+          <Button disabled={!isSendButtonEnabled} onClick={handleSendPost} className="mb-5">
+            Send
           </Button>
         </Col>
       </Row>

@@ -2,7 +2,7 @@ import { Contract, ethers } from "ethers";
 import configService from "./configService";
 
 const DummyPOHContract = require('../contracts/DummyProofOfHumanity.json');
-const HumanitweetContract = require('../contracts/Humanitweet.json');
+const PostaContract = require('../contracts/Posta.json');
 const UBIContract = require('../contracts/IUBI.json');
 
 export type EthersProviders = ethers.providers.ExternalProvider | ethers.providers.JsonRpcFetchFunc;
@@ -50,21 +50,21 @@ const contractProvider = {
         return await this.getContractForWrite(config.POHAddress, DummyPOHContract.abi, fromAddress, provider);
     },
 
-    async getHumanitweetContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider): Promise<Contract> {
+    async getPostaContractForWrite(fromAddress: string, provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
-        return await this.getContractForWrite(config.HumanitweetAddress, HumanitweetContract.abi, fromAddress, provider);
+        return await this.getContractForWrite(config.PostaAddress, PostaContract.abi, fromAddress, provider);
     },
 
     /**
-     * Returns an instance of the HumanitweetContract to execute read operations.
+     * Returns an instance of the PostaContract to execute read operations.
      * @param provider Web3Provider
      * @returns 
      */
-    async getHumanitweetContractForRead(provider: ethers.providers.Web3Provider): Promise<Contract> {
+    async getPostaContractForRead(provider: ethers.providers.Web3Provider): Promise<Contract> {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
-        return await this.getContractForRead(config.HumanitweetAddress, HumanitweetContract.abi, provider);
+        return await this.getContractForRead(config.PostaAddress, PostaContract.abi, provider);
     },
 
     async getUBIContractForRead(provider: ethers.providers.Web3Provider): Promise<Contract> {
@@ -79,10 +79,10 @@ const contractProvider = {
         return await this.getContractForWrite(config.UBIAddress, UBIContract.abi, address, provider);
     },
 
-    async getHumanitweetContractAddress(provider: ethers.providers.Web3Provider) {
+    async getPostaContractAddress(provider: ethers.providers.Web3Provider) {
         const network = await provider.getNetwork();
         const config = configService.getConfig(network.chainId);
-        return config.HumanitweetAddress;
+        return config.PostaAddress;
     }
 
 }

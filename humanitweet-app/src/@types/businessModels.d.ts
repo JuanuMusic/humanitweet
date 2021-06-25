@@ -1,4 +1,4 @@
-interface IHumanitweetNft {
+interface IPostaNFT {
     tokenId: string;
     tokenURI: string;
     creationDate: Date;
@@ -6,7 +6,7 @@ interface IHumanitweetNft {
     supportCount: BigNumber;
 }
 
-interface ITweetData {
+interface IPostData {
     author: string;
     text: string;
 }

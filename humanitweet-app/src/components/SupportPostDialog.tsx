@@ -8,21 +8,16 @@ import {
   Button,
 } from "react-bootstrap";
 import { Gem } from "react-bootstrap-icons";
-import HumanitweetService from "../services/HumanitweetService";
+import PostaService from "../services/PostaService";
 import UBIService from "../services/UBIService";
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, ethers, utils } from "ethers";
 import { useWeb3React } from "@web3-react/core";
-import contractProvider from "../services/ContractProvider";
 
-interface ISupportTweetDialogProps extends IBaseHumanitweetProps {
+interface ISupportPostDialogProps extends IBasePostaProps {
   show: boolean;
-  tweetTokenId: string;
+  postTokenId: string;
   onClose?(): any;
-}
-
-interface ISupportTweetDialogState {
-  amount?: string;
 }
 
 /**
@@ -40,7 +35,7 @@ function useUBIBalance(address: string) {
         address,
         new ethers.providers.Web3Provider(context.library?.provider!)
       );
-      console.log("NEW BALANCE", balance);
+      // Update the current UBI balance.
       setCurrentUBIBalance(balance);
     }
 
@@ -50,7 +45,7 @@ function useUBIBalance(address: string) {
   return currentUBIBalance;
 }
 
-function SupportTweetDialog(props: ISupportTweetDialogProps) {
+function SupportPostDialog(props: ISupportPostDialogProps) {
   const [amount, setAmount] = useState("");
   const currentUBIBalance = useUBIBalance(props.human.address);
   const [isApproved, setIsApproved] = useState(false);
@@ -70,7 +65,7 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
         parsedAmount.gt(BigNumber.from("0")) &&
         parsedAmount.lte(currentUBIBalance)
       ) {
-        await HumanitweetService.requestBurnApproval(
+        await PostaService.requestBurnApproval(
           props.human.address,
           parsedAmount,
           new ethers.providers.Web3Provider(context.library?.provider!)
@@ -93,8 +88,8 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
         parsedAmount.gt(BigNumber.from("0")) &&
         parsedAmount.lte(currentUBIBalance)
       ) {
-        await HumanitweetService.giveSupport(
-          props.tweetTokenId,
+        await PostaService.giveSupport(
+          props.postTokenId,
           parsedAmount,
           props.human.address,
           new ethers.providers.Web3Provider(context.library?.provider!)
@@ -126,7 +121,7 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
   return (
     <Modal show={props.show} onHide={handleClose} centered>
       <Modal.Header>
-        <Modal.Title>Support tweet {props.tweetTokenId}</Modal.Title>
+        <Modal.Title>Support Post <span className="muted">({props.postTokenId})</span></Modal.Title>
       </Modal.Header>
       <Modal.Body>
         UBI Balance: {ethers.utils.formatEther(currentUBIBalance.toString())}
@@ -162,4 +157,4 @@ function SupportTweetDialog(props: ISupportTweetDialogProps) {
   );
 }
 
-export default SupportTweetDialog;
+export default SupportPostDialog;

@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap"
 import DummyPOHService from "./services/DummyPOHService";
 import { Web3Provider } from "@ethersproject/providers";
 
-export default function DummyPOHController(props: IBaseHumanitweetProps) {
+export default function DummyPOHController(props: IBasePostaProps) {
 
     const context = useWeb3React<Web3Provider>()
 

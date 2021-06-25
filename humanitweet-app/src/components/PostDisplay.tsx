@@ -15,16 +15,16 @@ import {
 import moment from "moment";
 
 import { FaFire, FaUsers } from "react-icons/fa";
-import HumanitweetService from "../services/HumanitweetService";
+import PostaService from "../services/PostaService";
 import { ethers } from "ethers";
 import Skeleton from "react-loading-skeleton";
 
-interface ITweetDisplayProps extends IBaseHumanitweetProps {
-  humanitweetNft: IHumanitweetNft;
+interface IPostDisplayProps extends IBasePostaProps {
+  postaNFT: IPostaNFT;
   onBurnUBIsClicked(tokenId: number): any;
 }
 
-interface ITweetDisplayState {
+interface IPostDisplayState {
   tokenID: number;
   authorImage?: string | undefined;
   authorDisplayName?: string;
@@ -54,7 +54,7 @@ interface IGiveSupportButtonProps {
 }
 
 /**
- * The button used to give support to a tweet.
+ * The button used to give support to a post.
  * @param props A
  * @returns
  */
@@ -64,7 +64,7 @@ function GiveSupportButton(props: IGiveSupportButtonProps) {
       placement="bottom"
       overlay={
         <Tooltip id="immortalize_tooltip">
-          Immortalize this tweet by burning some UBIs!
+          Immortalize this post by burning some UBIs!
         </Tooltip>
       }
     >
@@ -80,11 +80,11 @@ function GiveSupportButton(props: IGiveSupportButtonProps) {
   );
 }
 
-export default class TweetDisplay extends React.Component<
-  ITweetDisplayProps,
-  ITweetDisplayState
+export default class PostDisplay extends React.Component<
+  IPostDisplayProps,
+  IPostDisplayState
 > {
-  constructor(props: ITweetDisplayProps) {
+  constructor(props: IPostDisplayProps) {
     super(props);
     this.state = {
       tokenID: -1,
@@ -92,7 +92,7 @@ export default class TweetDisplay extends React.Component<
   }
 
   componentDidMount() {
-    HumanitweetService.loadHumanitweetFromNFT(this.props.humanitweetNft);
+    PostaService.loadPostFromNFT(this.props.postaNFT);
   }
 
   async getEvidence(uri: string) {
@@ -142,7 +142,7 @@ export default class TweetDisplay extends React.Component<
                   </span>{" "}
                   <br />
                   <blockquote className="blockquote mb-0">
-                    <p className="humanitweet-text text-dark">
+                    <p className="post-text text-dark">
                       {" "}
                       {this.state.text || (
                         <Skeleton />
@@ -163,31 +163,31 @@ export default class TweetDisplay extends React.Component<
                   className="align-self-center"
                   onClick={this.handleBurnUBIsClicked}
                   supportGiven={
-                    this.props.humanitweetNft.supportGiven &&
+                    this.props.postaNFT.supportGiven &&
                     ethers.utils.formatEther(
-                      this.props.humanitweetNft.supportGiven
+                      this.props.postaNFT.supportGiven
                     )
                   }
                 />
 
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip id="supporters_hint">
-                      Number of humans that gave support to this humanitweet.
-                    </Tooltip>
-                  }
-                >
-                  <div className="d-inline-flex text-dark align-self-center justify-content-center px-2 mx-2">
-                    <FaUsers />
-                    <span>
-                      {(this.props.humanitweetNft.supportCount &&
-                        this.props.humanitweetNft.supportCount.toString()) ||
-                        "0"}{" "}
-                      supporters
-                    </span>
-                  </div>
-                </OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip id="supporters_hint">
+                        Number of humans that gave support to this post.
+                      </Tooltip>
+                    }
+                  >
+                    <div className="d-inline-flex text-dark align-self-center justify-content-center px-2 mx-2">
+                      <FaUsers />
+                      <span>
+                        {(this.props.postaNFT.supportCount &&
+                          this.props.postaNFT.supportCount.toString()) ||
+                          "0"}{" "}
+                        supporters
+                      </span>
+                    </div>
+                  </OverlayTrigger>
               </Col>
             </Row>
           </Container>

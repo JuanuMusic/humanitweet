@@ -6,8 +6,8 @@ import {
 } from "@web3-react/core";
 import "./App.css";
 import Container from "react-bootstrap/Container";
-import TweetEditor from "./components/TweetEditor";
-import TweetList from "./components/TweetList";
+import PostEditor from "./components/PostEditor";
+import PostList from "./components/PostList";
 import PohAPI from "./DAL/PohAPI";
 import DummyPOHController from "./DummyPOHController";
 //import { InjectedConnector } from "@web3-react/injected-connector";
@@ -49,7 +49,7 @@ export default function App(props: IAppProps) {
   //   dispatch({ con });
   // }, []);
 
-  const onNewTweetSent = (stackId: number) => {
+  const onNewPostSent = (stackId: number) => {
     //_pendingTransactionStacks.push(stackId);
     //this.processPendingTxs();
   };
@@ -68,7 +68,7 @@ export default function App(props: IAppProps) {
       <Container className="p-3" style={{maxWidth: "750px"}}>
         <Row>
           <Col>
-            <h1>Humanitweet</h1>
+            <h1>Posta</h1>
           </Col>
           <Col className="d-flex justify-content-end align-items-center">
             <Button
@@ -85,12 +85,12 @@ export default function App(props: IAppProps) {
         </Row>
         <Row>
           <Col>
-            <TweetEditor onNewTweetSent={onNewTweetSent} human={human} />
+            <PostEditor onNewPostSent={onNewPostSent} human={human} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <TweetList human={human} />
+            <PostList human={human} />
           </Col>
         </Row>
         <Row>
