@@ -8,31 +8,31 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/accessutils/math/SafeMath.sol";
 import "./IProofOfhumanity.sol";
 
-contract Humanitweet is ERC721, Ownable {
+contract Posta is ERC721, Ownable {
     SafeMath for uint256;
     string HUMAN_NOT_REGISTERED = "HUMAN_NOT_REGISTERED";
     using Strings for uint256;
     address _ubi;
 
-    struct HumanitweetData {
+    struct PostaData {
         
         // URI of the NFT data
         string tokenURI;
         
-        // Date at which the tweet was minted
+        // Date at which the post was minted
         uint256 date;
         
         // Ammount given as support
         uint256 supportGiven;
         
-        // Total number of unique humans that support this tweet
+        // Total number of unique humans that support this post
         uint256 supportersCount;
     }
     
     // Mapping for NFTS
-    mapping (uint256 => HumanitweetData) private _humanitweets;
+    mapping (uint256 => PostaData) private _posts;
 
-    // Mapping for humans that support each tweet
+    // Mapping for humans that support each post
     mapping(uint256 => mapping(address => bool)) _supporters;
 
     address private _poh;
@@ -55,13 +55,13 @@ contract Humanitweet is ERC721, Ownable {
         _;
     }
 
-    constructor(address poh, address ubi) public ERC721("Humanitweet", "HTWT") {
+    constructor(address poh, address ubi) public ERC721("Posta", "PSTA") {
         _tokenCounter = 0;
         _poh = poh;
         _ubi = ubi;
     }
 
-    function publishHumanitweet(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
+    function publishPost(string memory newTokenURI) public isHuman(_msgSender()) returns(uint256)  {
         
         // Get the new token iD
         uint256 newItemId = _tokenCounter;
@@ -69,16 +69,16 @@ contract Humanitweet is ERC721, Ownable {
         // Mint the NFT with the new ID
         _safeMint(_msgSender(), newItemId);
 
-        // Generate the humanitweet NFT storage data
-        HumanitweetData memory humanitweet = HumanitweetData({
+        // Generate the post NFT storage data
+        PostaData memory post = PostaData({
             date: block.timestamp,
             tokenURI: newTokenURI,
             supportGiven: 0,
             supportersCount: 0
         });
 
-        // Set the humanitweet dat to the token
-        _setHumanitweet(newItemId, humanitweet);
+        // Set the post dat to the token
+        _setPost(newItemId, post);
         
         // Update the token counter
         _tokenCounter = _tokenCounter +1;
@@ -95,22 +95,22 @@ contract Humanitweet is ERC721, Ownable {
         return _baseURIextended;
     }
 
-    function _setHumanitweet(uint256 tokenId, HumanitweetData memory data) internal virtual tokenExists(tokenId) {
-     _humanitweets[tokenId] = data;
+    function _setPost(uint256 tokenId, PostaData memory data) internal virtual tokenExists(tokenId) {
+     _posts[tokenId] = data;
     }
     
     function tokenURI(uint256 tokenId) public view virtual override tokenExists(tokenId) returns (string memory) {
 
-        HumanitweetData memory humanitweet = _humanitweets[tokenId];
+        PostaData memory post = _posts[tokenId];
         string memory base = _baseURI();
         
         // If there is no base URI, return the token URI.
         if (bytes(base).length == 0) {
-            return humanitweet.tokenURI;
+            return post.tokenURI;
         }
         // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
-        if (bytes(humanitweet.tokenURI).length > 0) {
-            return string(abi.encodePacked(base, humanitweet.tokenURI));
+        if (bytes(post.tokenURI).length > 0) {
+            return string(abi.encodePacked(base, post.tokenURI));
         }
         // If there is a baseURI but no tokenURI, concatenate the tokenID to the baseURI.
         return string(abi.encodePacked(base, tokenId.toString()));
@@ -120,12 +120,12 @@ contract Humanitweet is ERC721, Ownable {
         return _tokenCounter;
     }
 
-    function getHumanitweet(uint256 tokenId) public view virtual tokenExists(tokenId) returns (HumanitweetData memory) {
-        return _humanitweets[tokenId];
+    function getPost(uint256 tokenId) public view virtual tokenExists(tokenId) returns (PostaData memory) {
+        return _posts[tokenId];
     }
 
     /**
-     * Gives support to this tweet and burns the UBI. 
+     * Gives support to this posta and burns the UBI. 
      * Supporters count is only added once per human.
      * If a Human gives support multiple times it will only count as one supporter.
      */
@@ -133,12 +133,12 @@ contract Humanitweet is ERC721, Ownable {
 
         // ammount to burn
         uint256 toBurn = ubiAmount.div(2);
-        require(toBurn > 0, "Humanitweet: invalid ubi amount to burn");
+        require(toBurn > 0, "Posta: invalid ubi amount to burn");
         
         // Burn the UBI on behalf of the caller.
         ERC20Burnable(_ubi).burnFrom(_msgSender(), toBurn);
         
-        // Transfer remainder to tweet creator
+        // Transfer remainder to posta creator
         uint256 forCreator = ubiAmount.sub(toBurn);
         if(forCreator > 0) { 
             ERC20(_ubi).transferFrom(_msgSender, forCreator);
@@ -153,12 +153,12 @@ contract Humanitweet is ERC721, Ownable {
         
         uint256 amountToBurn = 
          // Add the amount of support given
-        _humanitweets[tokenId].supportGiven += amount;
+        _posts[tokenId].supportGiven += amount;
 
         // If is first support, add 1 supporter.
         if(!_supporters[tokenId][supporter]) {
             _supporters[tokenId][supporter] = true;
-            _humanitweets[tokenId].supportersCount += 1;
+            _posts[tokenId].supportersCount += 1;
         }
     }
 }
