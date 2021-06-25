@@ -17,6 +17,7 @@ import moment from "moment";
 import { FaFire, FaUsers } from "react-icons/fa";
 import HumanitweetService from "../services/HumanitweetService";
 import { ethers } from "ethers";
+import Skeleton from "react-loading-skeleton";
 
 interface ITweetDisplayProps extends IBaseHumanitweetProps {
   humanitweetNft: IHumanitweetNft;
@@ -25,12 +26,12 @@ interface ITweetDisplayProps extends IBaseHumanitweetProps {
 
 interface ITweetDisplayState {
   tokenID: number;
-  authorImage: string | undefined;
-  authorDisplayName: string;
-  authorFullName: string;
-  text: string;
-  date: string;
-  supportGiven: number;
+  authorImage?: string | undefined;
+  authorDisplayName?: string;
+  authorFullName?: string;
+  text?: string;
+  date?: string;
+  supportGiven?: number;
 }
 
 interface IEvidence {
@@ -87,13 +88,6 @@ export default class TweetDisplay extends React.Component<
     super(props);
     this.state = {
       tokenID: -1,
-      authorImage:
-        "https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg",
-      authorDisplayName: "Loading...",
-      authorFullName: "Loading...",
-      text: "Loading...",
-      date: "Loading...",
-      supportGiven: 0,
     };
   }
 
@@ -130,19 +124,34 @@ export default class TweetDisplay extends React.Component<
           <Container>
             <Row>
               <Col className="d-flex">
-                <img className="avatar mr-2" src={this.state.authorImage} />
-                <div>
+                {(this.state.authorImage && (
+                  <img className="avatar mr-2" src={this.state.authorImage} />
+                )) || (
+                  <Skeleton
+                    className="m-2"
+                    circle={true}
+                    width={50}
+                    height={50}
+                  />
+                )}
+                <div className="flex-fill">
                   <span className="text-dark">
-                    <strong>{this.state.authorDisplayName}</strong>
+                    <strong>
+                      {this.state.authorDisplayName || <Skeleton />}
+                    </strong>
                   </span>{" "}
                   <br />
                   <blockquote className="blockquote mb-0">
                     <p className="humanitweet-text text-dark">
                       {" "}
-                      {this.state.text}{" "}
+                      {this.state.text || (
+                        <Skeleton />
+                      )}{" "}
                     </p>
                     <footer className="blockquote-footer">
-                      <span className="fw-light">{this.state.date}</span>
+                      <span className="fw-light">
+                        {this.state.date || <Skeleton />}
+                      </span>
                     </footer>
                   </blockquote>
                 </div>
@@ -161,24 +170,24 @@ export default class TweetDisplay extends React.Component<
                   }
                 />
 
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={
-                      <Tooltip id="supporters_hint">
-                        Number of humans that gave support to this humanitweet.
-                      </Tooltip>
-                    }
-                  >
-                    <div className="d-inline-flex text-dark align-self-center justify-content-center px-2 mx-2">
-                      <FaUsers />
-                      <span>
-                        {(this.props.humanitweetNft.supportCount &&
-                          this.props.humanitweetNft.supportCount.toString()) ||
-                          "0"}{" "}
-                        supporters
-                      </span>
-                    </div>
-                  </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="supporters_hint">
+                      Number of humans that gave support to this humanitweet.
+                    </Tooltip>
+                  }
+                >
+                  <div className="d-inline-flex text-dark align-self-center justify-content-center px-2 mx-2">
+                    <FaUsers />
+                    <span>
+                      {(this.props.humanitweetNft.supportCount &&
+                        this.props.humanitweetNft.supportCount.toString()) ||
+                        "0"}{" "}
+                      supporters
+                    </span>
+                  </div>
+                </OverlayTrigger>
               </Col>
             </Row>
           </Container>

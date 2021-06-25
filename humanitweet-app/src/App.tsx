@@ -4,7 +4,6 @@ import {
   useWeb3React,
   UnsupportedChainIdError,
 } from "@web3-react/core";
-import drizzleOptions from "./drizzleOptions";
 import "./App.css";
 import Container from "react-bootstrap/Container";
 import TweetEditor from "./components/TweetEditor";

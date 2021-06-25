@@ -101,16 +101,6 @@ class TweetListClass extends React.Component<ITweetListProps, ITweetListState> {
 
   componentDidMount() {
     this.refreshTweets();
-    this.subscribeTransferEvent();
-  }
-
-  subscribeTransferEvent() {
-    // const drizzle = this.props.drizzle;
-    // drizzle.contracts.Humanitweet.events.Transfer(
-    //   (to: string, amount: number) => {
-    //     this.refreshTweets();
-    //   }
-    // );
   }
 
   refreshTweets = async () => {
